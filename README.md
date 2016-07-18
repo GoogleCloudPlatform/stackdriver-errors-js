@@ -22,6 +22,7 @@ This experimental library provides Stackdriver Error Reporting support for clien
 1. **Load and initialize the library**
 
   Add this line in your HTML code, before `</head>`:
+
 	```html
 	<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.1.0/dist/stackdriver-errors.min.js"></script>
   <script type="text/javascript">
@@ -31,25 +32,25 @@ This experimental library provides Stackdriver Error Reporting support for clien
     serviceContext: {service: 'my-service-name'}
   });
   </script>
-	``` 
-  
+	```
+
   And that's all you need to do. Unhandled exception will now automatically be reported to your project.
   Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view them.
-  
+
   Additionally, you can change your code to report errors:
-  
+
   When catching an exception:
-  
+
   ```JS
   try {
-    doSomeThingRisky();
+    doSomethingRisky();
   } catch (e) {
     StackdriverErrors.report(e);
-  } 
+  }
   ```
 
   or anytime:
- 
+
   ```JS
   StackdriverErrors.report('Something broke!');
   ```
@@ -58,6 +59,6 @@ This experimental library provides Stackdriver Error Reporting support for clien
 
 **Q: Should I use this code in my production application?**
 A: This is an experimental library. We do not recommend using it on production yet.
-  
+
 **Q: Are source maps supported?**
 A: Not yet.
