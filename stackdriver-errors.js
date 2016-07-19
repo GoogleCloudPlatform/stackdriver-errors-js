@@ -61,7 +61,7 @@ StackdriverErrorReporting.prototype.report = function(err) {
       filePath: 'stackdriver-errors.js',
       lineNumber: 42,
       functionName: 'report'
-    } 
+    }
 
   }
 
@@ -72,7 +72,7 @@ StackdriverErrorReporting.prototype.sendErrorPayload = function(payload) {
   console.log('[Stackdriver Error Reporting] Sending error', payload)
 
   var baseUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
-  var url = baseUrl + this.projectId + "/events?key=" + this.apiKey;
+  var url = baseUrl + this.projectId + "/events:report?key=" + this.apiKey;
 
   var xhr = new XMLHttpRequest();
   xhr.open('POST', url, true);
