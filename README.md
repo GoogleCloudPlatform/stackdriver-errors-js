@@ -23,7 +23,7 @@ This experimental library provides Stackdriver Error Reporting support for clien
 
   Add this line in your HTML code, before `</head>`:
 
-	```html
+```HTML
 	<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.1.0/dist/stackdriver-errors.min.js"></script>
   <script type="text/javascript">
   StackdriverErrors.init({
@@ -32,7 +32,7 @@ This experimental library provides Stackdriver Error Reporting support for clien
     serviceContext: {service: 'my-service-name'}
   });
   </script>
-	```
+```
 
   And that's all you need to do. Unhandled exception will now automatically be reported to your project.
   Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view them.
