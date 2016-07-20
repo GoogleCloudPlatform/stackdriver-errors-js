@@ -26,7 +26,8 @@ This experimental library provides Stackdriver Error Reporting support for clien
 ```HTML
 	<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.1.0/dist/stackdriver-errors.min.js"></script>
   <script type="text/javascript">
-  StackdriverErrors.init({
+  var errorHandler = new StackdriverErrorReporting();
+  errorHandler.init({
     key: 'my-api-key',
     projectId: 'my-project-id',
     serviceContext: {service: 'my-service-name'}
@@ -45,14 +46,14 @@ This experimental library provides Stackdriver Error Reporting support for clien
   try {
     doSomethingRisky();
   } catch (e) {
-    StackdriverErrors.report(e);
+    errorHandler.report(e);
   }
   ```
 
   or anytime:
 
   ```JS
-  StackdriverErrors.report('Something broke!');
+  errorHandler.report('Something broke!');
   ```
 
 ## FAQ

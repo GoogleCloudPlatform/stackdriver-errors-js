@@ -17,7 +17,8 @@ var expect = chai.expect;
 
 describe('Initialization', function () {
  it('should have default service', function () {
-   StackdriverErrors.init({key:'key', projectId:'projectId'});
-   expect(StackdriverErrors.serviceContext.service).to.equal('web');
+   var errorHandler = new StackdriverErrorReporting();
+   errorHandler.init({key:'key', projectId:'projectId'});
+   expect(errorHandler.serviceContext.service).to.equal('web');
  });
 });
