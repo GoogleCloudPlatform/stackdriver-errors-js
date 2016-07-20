@@ -16,6 +16,7 @@
 var expect = chai.expect;
 
 var errorHandler;
+var xhr, requests;
 
 beforeEach(function() {
   errorHandler = new StackdriverErrorReporting();
@@ -34,5 +35,29 @@ describe('Initialization', function () {
  it('should fail if no project ID', function () {
    expect(function() {errorHandler.init({key:'key'});}).to.throw(Error, /project/);
  });
+
+});
+
+describe('Reporting errors', function () {
+  beforeEach(function() {
+    errorHandler.init({key:'key', projectId:'projectId'});
+    xhr = sinon.useFakeXMLHttpRequest();
+    requests = [];
+    xhr.onCreate = function (req) { requests.push(req); };
+  });
+
+  it('should report error messages with location', function () {
+    var message = 'Something broke!';
+    errorHandler.report(message);
+    expect(requests.length).to.equal(1);
+
+    var sentBody = JSON.parse(requests[0].requestBody);
+    expect(sentBody.message).to.equal(message);
+    expect(sentBody.context.reportLocation.filePath).to.equal('stackdriver-errors.js');
+  });
+
+  afterEach(function() {
+    xhr.restore();
+  });
 
 });
