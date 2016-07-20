@@ -39,7 +39,7 @@
     if(this.onUncaughtException == 'report') {
       window.onerror = function(message, source, lineno, colno, error) {
         that.report(error);
-      }
+      };
     }
   };
 
@@ -54,7 +54,7 @@
         userAgent: window.navigator.userAgent,
         url: window.location.href
       }
-    }
+    };
 
     if (err instanceof Error) {
       payload.message = err.stack;
@@ -65,15 +65,15 @@
         filePath: 'stackdriver-errors.js',
         lineNumber: 42,
         functionName: 'report'
-      }
+      };
 
     }
 
     this.sendErrorPayload(payload);
-  }
+  };
 
   StackdriverErrorReporting.prototype.sendErrorPayload = function(payload) {
-    console.log('[Stackdriver Error Reporting] Sending error', payload)
+    console.log('[Stackdriver Error Reporting] Sending error', payload);
 
     var baseUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
     var url = baseUrl + this.projectId + "/events:report?key=" + this.apiKey;
@@ -85,5 +85,5 @@
     xhr.onloadend = function () {
       console.log('[Stackdriver Error Reporting]: Error sent');
     };
-  }
+  };
 })(this);

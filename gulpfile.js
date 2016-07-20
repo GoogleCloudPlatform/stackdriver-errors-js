@@ -18,8 +18,16 @@ var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
+var jshint = require('gulp-jshint');
 
+var SRC_FILE = 'stackdriver-errors.js';
 var DEST = 'dist/';
+
+gulp.task('lint', function() {
+  return gulp.src(SRC_FILE)
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'));
+});
 
 gulp.task('test', function () {
     return gulp
@@ -28,7 +36,7 @@ gulp.task('test', function () {
 });
 
 gulp.task('dist', function() {
-  return gulp.src('stackdriver-errors.js')
+  return gulp.src(SRC_FILE)
     .pipe(sourcemaps.init())
     // This will output the non-minified version
     .pipe(gulp.dest(DEST))
@@ -38,3 +46,5 @@ gulp.task('dist', function() {
     .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest(DEST));
 });
+
+gulp.task('default', ['lint', 'test']);

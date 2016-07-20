@@ -68,6 +68,6 @@ A: Not yet.
 
 Install developer dependencies `npm install --dev`
 
-`gulp test` runs tests, using mocha and PhantomJS.
+Run `gulp` to test your changes.
 
-`gulp dist` generates the minified version.
+Run `gulp dist` generates the minified version.
