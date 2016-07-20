@@ -15,10 +15,24 @@
  */
 var expect = chai.expect;
 
+var errorHandler;
+
+beforeEach(function() {
+  errorHandler = new StackdriverErrorReporting();
+});
+
 describe('Initialization', function () {
  it('should have default service', function () {
-   var errorHandler = new StackdriverErrorReporting();
    errorHandler.init({key:'key', projectId:'projectId'});
    expect(errorHandler.serviceContext.service).to.equal('web');
  });
+
+ it('should fail if no API key', function () {
+   expect(function() {errorHandler.init({projectId:'projectId'});}).to.throw(Error, /API/);
+ });
+
+ it('should fail if no project ID', function () {
+   expect(function() {errorHandler.init({key:'key'});}).to.throw(Error, /project/);
+ });
+
 });

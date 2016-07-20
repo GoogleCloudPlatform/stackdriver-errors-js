@@ -21,12 +21,10 @@
 
   StackdriverErrorReporting.prototype.init = function(config) {
     if(!config.key) {
-      console.error('[Stackdriver Error Reporting] Cannot initialize: No API key provided.');
-      return;
+      throw new Error('Cannot initialize: No API key provided.');
     }
     if(!config.projectId) {
-      console.error('[Stackdriver Error Reporting] Cannot initialize: No Project ID provided.');
-      return;
+      throw new Error('Cannot initialize: No project ID provided.');
     }
 
     this.apiKey = config.key;
@@ -47,7 +45,6 @@
     if(!err) {return;}
 
     var payload = {};
-    // see https://cloud.google.com/error-reporting/docs/formatting-error-messages#json_representation for payload description
     payload.serviceContext = this.serviceContext;
     payload.context = {
       httpRequest: {
@@ -63,18 +60,14 @@
 
       payload.context.reportLocation = {
         filePath: 'stackdriver-errors.js',
-        lineNumber: 42,
         functionName: 'report'
       };
-
     }
 
     this.sendErrorPayload(payload);
   };
 
   StackdriverErrorReporting.prototype.sendErrorPayload = function(payload) {
-    console.log('[Stackdriver Error Reporting] Sending error', payload);
-
     var baseUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
     var url = baseUrl + this.projectId + "/events:report?key=" + this.apiKey;
 
@@ -83,7 +76,7 @@
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     xhr.send(JSON.stringify(payload));
     xhr.onloadend = function () {
-      console.log('[Stackdriver Error Reporting]: Error sent');
+      console.log('[Stackdriver Error Reporting]: Error reported', payload);
     };
   };
 })(this);
