@@ -17,13 +17,14 @@ var gulp = require('gulp');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
-var mocha = require('gulp-mocha');
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
 
 var DEST = 'dist/';
 
-gulp.task('default', function() {
-  return gulp.src(['test/test.js'], { read: false })
-    .pipe(mocha());
+gulp.task('test', function () {
+    return gulp
+    .src('test/test.html')
+    .pipe(mochaPhantomJS({reporter: 'spec'}));
 });
 
 gulp.task('dist', function() {

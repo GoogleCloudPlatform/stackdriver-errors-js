@@ -65,8 +65,8 @@ A: Not yet.
 
 ## Developing the library
 
-Install developer dependencies `npm install`
+Install developer dependencies `npm install --dev`
 
-`gulp` runs tests, using mocha.
+`gulp test` runs tests, using mocha and PhantomJS.
 
 `gulp dist` generates the minified version.

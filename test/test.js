@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var assert = require('chai').assert;
-describe('Array', function() {
-  describe('#indexOf()', function() {
-    it('should return -1 when the value is not present', function() {
-      assert.equal(-1, [1,2,3].indexOf(5));
-      assert.equal(-1, [1,2,3].indexOf(0));
-    });
-  });
-});
+ var expect = chai.expect;
+
+ describe('true', function () {
+   it('should be true', function () {
+     expect(true).to.equal(true);
+   });
+ });
+
+ describe('false', function () {
+   it('should be false', function () {
+     expect(false).to.equal(false);
+   });
+ });
