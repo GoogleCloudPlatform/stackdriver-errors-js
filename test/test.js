@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- var expect = chai.expect;
+var expect = chai.expect;
 
- describe('true', function () {
-   it('should be true', function () {
-     expect(true).to.equal(true);
-   });
+describe('Initialization', function () {
+ it('should have default service', function () {
+   StackdriverErrors.init({key:'key', projectId:'projectId'});
+   expect(StackdriverErrors.serviceContext.service).to.equal('web');
  });
-
- describe('false', function () {
-   it('should be false', function () {
-     expect(false).to.equal(false);
-   });
- });
+});
