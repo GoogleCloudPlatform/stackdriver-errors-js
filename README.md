@@ -62,3 +62,11 @@ A: This is an experimental library. We do not recommend using it on production y
 
 **Q: Are source maps supported?**
 A: Not yet.
+
+## Developing the library
+
+Install developer dependencies `npm install`
+
+`gulp` runs tests, using mocha.
+
+`gulp dist` generates the minified version.

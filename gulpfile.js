@@ -17,10 +17,16 @@ var gulp = require('gulp');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var mocha = require('gulp-mocha');
 
 var DEST = 'dist/';
 
 gulp.task('default', function() {
+  return gulp.src(['test/test.js'], { read: false })
+    .pipe(mocha());
+});
+
+gulp.task('dist', function() {
   return gulp.src('stackdriver-errors.js')
     .pipe(sourcemaps.init())
     // This will output the non-minified version
