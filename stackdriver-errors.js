@@ -16,9 +16,22 @@
 (function(exports) {
   "use strict";
 
+  /**
+   * An Error handler that sends errors to the Stackdriver Error Reporting API.
+   */
   var StackdriverErrorReporting = function() {};
   exports.StackdriverErrorReporting = StackdriverErrorReporting;
 
+  /**
+   * Initialize the StackdriverErrorReporting object.
+   * @param {Object} config - the init configuration.
+   * @param {String} config.key - the API key to use to call the API.
+   * @param {String} config.projectId - the Google Cloud Platform project ID to report errors to.
+   * @param {String} [config.service=web] - service identifier.
+   * @param {String} [config.version] - version identifier.
+   * @param {Boolean} [config.reportUncaughtExceptions=true] - Set to false to stop reporting unhandled exceptions.
+   * @param {Boolean} [config.disabled=false] - Set to true to not report errors when calling report(), this can be used when developping locally.
+   */
   StackdriverErrorReporting.prototype.init = function(config) {
     if(!config.key) {
       throw new Error('Cannot initialize: No API key provided.');
@@ -29,7 +42,13 @@
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
-    this.serviceContext = config.serviceContext || {service: 'web'};
+    this.serviceContext = {service: 'web'};
+    if(config.service) {
+      this.serviceContext.service = config.service;
+    }
+    if(config.version) {
+      this.serviceContext.version = config.version;
+    }
     this.reportUncaughtExceptions = config.reportUncaughtExceptions || true;
     this.disabled = config.disabled || false;
 
@@ -42,6 +61,10 @@
     }
   };
 
+  /**
+   * Report an error to the Stackdriver Error Reporting API
+   * @param {Error|String} err - The Error object or message string to report.
+   */
   StackdriverErrorReporting.prototype.report = function(err) {
     if(this.disabled) {return;}
     if(!err) {return;}
