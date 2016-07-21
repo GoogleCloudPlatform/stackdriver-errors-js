@@ -28,6 +28,11 @@ describe('Initialization', function () {
    expect(errorHandler.serviceContext.service).to.equal('web');
  });
 
+ it('should by default report uncaught exceptions', function () {
+   errorHandler.init({key:'key', projectId:'projectId'});
+   expect(errorHandler.reportUncaughtExceptions).to.equal(true);
+ });
+
  it('should fail if no API key', function () {
    expect(function() {errorHandler.init({projectId:'projectId'});}).to.throw(Error, /API/);
  });

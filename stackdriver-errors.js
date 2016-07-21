@@ -30,11 +30,11 @@
     this.apiKey = config.key;
     this.projectId = config.projectId;
     this.serviceContext = config.serviceContext || {service: 'web'};
-    this.onUncaughtException = config.onUncaughtException || 'report';
+    this.reportUncaughtExceptions = config.reportUncaughtExceptions || true;
 
     // Register as global error handler if requested
     var that = this;
-    if(this.onUncaughtException == 'report') {
+    if(this.reportUncaughtExceptions) {
       window.onerror = function(message, source, lineno, colno, error) {
         that.report(error);
       };
