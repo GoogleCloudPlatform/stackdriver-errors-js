@@ -31,6 +31,7 @@
     this.projectId = config.projectId;
     this.serviceContext = config.serviceContext || {service: 'web'};
     this.reportUncaughtExceptions = config.reportUncaughtExceptions || true;
+    this.disabled = config.disabled || false;
 
     // Register as global error handler if requested
     var that = this;
@@ -42,6 +43,7 @@
   };
 
   StackdriverErrorReporting.prototype.report = function(err) {
+    if(this.disabled) {return;}
     if(!err) {return;}
 
     var payload = {};

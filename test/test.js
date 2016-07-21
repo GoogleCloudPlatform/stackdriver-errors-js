@@ -20,6 +20,10 @@ var xhr, requests;
 
 beforeEach(function() {
   errorHandler = new StackdriverErrorReporting();
+
+  xhr = sinon.useFakeXMLHttpRequest();
+  requests = [];
+  xhr.onCreate = function (req) { requests.push(req); };
 });
 
 describe('Initialization', function () {
@@ -43,12 +47,20 @@ describe('Initialization', function () {
 
 });
 
+describe('Disabling', function () {
+
+ it('should not report errors if disabled', function () {
+   errorHandler.init({key:'key', projectId:'projectId', disabled: true});
+    errorHandler.report('do not report');
+
+    expect(requests.length).to.equal(0);
+ });
+
+});
+
 describe('Reporting errors', function () {
   beforeEach(function() {
     errorHandler.init({key:'key', projectId:'projectId'});
-    xhr = sinon.useFakeXMLHttpRequest();
-    requests = [];
-    xhr.onCreate = function (req) { requests.push(req); };
   });
 
   it('should report error messages with location', function () {
@@ -77,11 +89,10 @@ describe('Reporting errors', function () {
       //expect(sentBody.message).to.contain(message);
     }
 
-
   });
 
-  afterEach(function() {
-    xhr.restore();
-  });
+});
 
+afterEach(function() {
+  xhr.restore();
 });
