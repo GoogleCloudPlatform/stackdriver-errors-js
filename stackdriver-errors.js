@@ -53,7 +53,9 @@
       }
     };
 
-    if (err instanceof Error) {
+    // Warning: err.stack is not a standard Error attribute
+    //(see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Stack)
+    if(err.stack) {
       payload.message = err.stack;
     } else {
       payload.message = err.toString();

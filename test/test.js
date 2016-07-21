@@ -61,6 +61,25 @@ describe('Reporting errors', function () {
     expect(sentBody.context.reportLocation.filePath).to.equal('stackdriver-errors.js');
   });
 
+  it('should extract and send stack traces from Errors', function () {
+    var message = 'custom message';
+    // PhantomJS only attaches a stack to thrown errors
+    try {
+      throw new TypeError(message);
+    } catch(e) {
+      errorHandler.report(e);
+
+      expect(requests.length).to.equal(1);
+      var sentBody = JSON.parse(requests[0].requestBody);
+      expect(sentBody).to.include.keys('message');
+      // PhantomJS does not return stacks with message.
+      // The following test will succeed on Chrome but fail on PhantomJS
+      //expect(sentBody.message).to.contain(message);
+    }
+
+
+  });
+
   afterEach(function() {
     xhr.restore();
   });
