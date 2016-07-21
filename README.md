@@ -30,7 +30,7 @@ This experimental library provides Stackdriver Error Reporting support for clien
   errorHandler.init({
     key: 'my-api-key',
     projectId: 'my-project-id',
-    serviceContext: {service: 'my-service-name'}
+    service: 'my-service-name'
   });
   </script>
 ```
