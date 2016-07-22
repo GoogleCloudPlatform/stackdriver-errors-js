@@ -1,7 +1,7 @@
 {
   "name": "stackdriver-errors-js",
   "version": "0.0.1",
-  "description": "Client-side JavaScript library to report errors to Stackdriver Error Reporting",
+  "description": "Experimental client-side JavaScript library to report errors to Stackdriver Error Reporting",
   "main": "stackdriver-errors.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
