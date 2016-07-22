@@ -1,9 +1,9 @@
-# Client-side JavaScript library for Stackdriver Error Reporting
+# Experimental Client-side JavaScript library for Stackdriver Error Reporting
 
 > **This is not an official Google product.** This module is experimental and may not be ready for use.
 > This module uses APIs that may be undocumented and are subject to change without notice.
 
-This experimental library provides Stackdriver Error Reporting support for client-side web JavaScript applications.
+This **experimental** library provides Stackdriver Error Reporting support for client-side web JavaScript applications.
 [Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. Here's an introductory video:
 
 [![Learn about Error Reporting in Stackdriver](https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg)](https://www.youtube.com/watch?v=cVpWVD75Hs8)
@@ -19,20 +19,21 @@ This experimental library provides Stackdriver Error Reporting support for clien
 
   Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
 
-1. **Load and initialize the library**
+1. **Load and initialize the experimental library**
 
   Add this line in your HTML code, before `</head>`:
 
 ```HTML
-	<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.1.0/dist/stackdriver-errors.min.js"></script>
-  <script type="text/javascript">
-  var errorHandler = new StackdriverErrorReporting();
-  errorHandler.init({
-    key: 'my-api-key',
-    projectId: 'my-project-id',
-    service: 'my-service-name'
-  });
-  </script>
+<!-- Warning: This is an experimental library, do not use it on production environments -->
+<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.1.0/dist/stackdriver-errors.min.js"></script>
+<script type="text/javascript">
+var errorHandler = new StackdriverErrorReporting();
+errorHandler.init({
+  key: 'my-api-key',
+  projectId: 'my-project-id',
+  service: 'my-service-name'
+});
+</script>
 ```
 
   And that's all you need to do. Unhandled exception will now automatically be reported to your project.
