@@ -57,6 +57,7 @@
     if(this.reportUncaughtExceptions) {
       window.onerror = function(message, source, lineno, colno, error) {
         that.report(error);
+        return true;
       };
     }
   };
@@ -65,9 +66,13 @@
    * Report an error to the Stackdriver Error Reporting API
    * @param {Error|String} err - The Error object or message string to report.
    */
-  StackdriverErrorReporting.prototype.report = function(err) {
-    if(this.disabled) {return;}
-    if(!err) {return;}
+  StackdriverErrorReporting.prototype.report = function(err, callback) {
+    if(this.disabled) {
+      return typeof callback === 'function' && callback();
+    }
+    if(!err) {
+      return typeof callback === 'function' && callback('no error to report');
+    }
 
     var payload = {};
     payload.serviceContext = this.serviceContext;
@@ -78,23 +83,29 @@
       }
     };
 
-    // Warning: err.stack is not a standard Error attribute
-    //(see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Stack)
-    if(err.stack) {
-      payload.message = err.stack;
-    } else {
-      payload.message = err.toString();
-
-      payload.context.reportLocation = {
-        filePath: 'stackdriver-errors.js',
-        functionName: 'report'
-      };
+    var firstFrameIndex = 0;
+    if(typeof err == 'string' || err instanceof String) {
+      // Transform the message in an error, use try/catch to make sure the stacktrace is populated.
+      try {
+        throw new Error(err);
+      } catch(e) {
+        err = e;
+      }
+      // the first frame when using report() is always this library
+      firstFrameIndex = 1;
     }
-
-    this.sendErrorPayload(payload);
+    var that = this;
+    StackTrace.fromError(err).then(function(stack){
+      payload.message = err.toString();
+      for(var s = firstFrameIndex; s < stack.length; s++) {
+        payload.message += '\n';
+        payload.message += stack[s].source;
+      }
+      that.sendErrorPayload(payload, callback);
+    });
   };
 
-  StackdriverErrorReporting.prototype.sendErrorPayload = function(payload) {
+  StackdriverErrorReporting.prototype.sendErrorPayload = function(payload, callback) {
     var baseUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
     var url = baseUrl + this.projectId + "/events:report?key=" + this.apiKey;
 
@@ -102,8 +113,11 @@
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     xhr.send(JSON.stringify(payload));
-    xhr.onloadend = function () {
-      console.log('[Stackdriver Error Reporting]: Error reported', payload);
+    xhr.onloadend = function() {
+      return typeof callback === 'function' && callback();
+    };
+    xhr.onerror = function(e) {
+      return typeof callback === 'function' && callback(e);
     };
   };
 })(this);

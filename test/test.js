@@ -22,8 +22,21 @@ beforeEach(function() {
   errorHandler = new StackdriverErrorReporting();
 
   xhr = sinon.useFakeXMLHttpRequest();
+  xhr.useFilters = true;
+  xhr.addFilter(function (method, url) {
+      return !url.match('clouderrorreporting');
+  });
+
   requests = [];
-  xhr.onCreate = function (req) { requests.push(req); };
+  xhr.onCreate = function (req) {
+    // Allow `onCreate` to complete so `xhr` can finish instantiating.
+    setTimeout(function(){
+      if(req.url.match('clouderrorreporting')) {
+        requests.push(req);
+      }
+      req.respond(200, {"Content-Type": "application/json"}, '{}');
+    }, 1);
+  };
 });
 
 describe('Initialization', function () {
@@ -49,11 +62,12 @@ describe('Initialization', function () {
 
 describe('Disabling', function () {
 
- it('should not report errors if disabled', function () {
+ it('should not report errors if disabled', function (done) {
    errorHandler.init({key:'key', projectId:'projectId', disabled: true});
-    errorHandler.report('do not report');
-
-    expect(requests.length).to.equal(0);
+    errorHandler.report('do not report', function() {
+      expect(requests.length).to.equal(0);
+      done();
+    });
  });
 
 });
@@ -63,32 +77,33 @@ describe('Reporting errors', function () {
     errorHandler.init({key:'key', projectId:'projectId'});
   });
 
-  it('should report error messages with location', function () {
+  it('should report error messages with location', function (done) {
     var message = 'Something broke!';
-    errorHandler.report(message);
-    expect(requests.length).to.equal(1);
+    errorHandler.report(message, function() {
+      expect(requests.length).to.equal(1);
 
-    var sentBody = JSON.parse(requests[0].requestBody);
-    expect(sentBody.message).to.equal(message);
-    expect(sentBody.context.reportLocation.filePath).to.equal('stackdriver-errors.js');
+      var sentBody = JSON.parse(requests[0].requestBody);
+      expect(sentBody.message).to.contain(message);
+      done();
+    });
   });
 
-  it('should extract and send stack traces from Errors', function () {
+
+  it('should extract and send stack traces from Errors', function (done) {
     var message = 'custom message';
     // PhantomJS only attaches a stack to thrown errors
     try {
       throw new TypeError(message);
     } catch(e) {
-      errorHandler.report(e);
+      errorHandler.report(e, function() {
+        expect(requests.length).to.equal(1);
+        var sentBody = JSON.parse(requests[0].requestBody);
+        expect(sentBody).to.include.keys('message');
+        expect(sentBody.message).to.contain(message);
 
-      expect(requests.length).to.equal(1);
-      var sentBody = JSON.parse(requests[0].requestBody);
-      expect(sentBody).to.include.keys('message');
-      // PhantomJS does not return stacks with message.
-      // The following test will succeed on Chrome but fail on PhantomJS
-      //expect(sentBody.message).to.contain(message);
+        done();
+      });
     }
-
   });
 
 });

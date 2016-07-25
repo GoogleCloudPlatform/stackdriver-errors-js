@@ -19,9 +19,14 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var jshint = require('gulp-jshint');
+var concat = require('gulp-concat');
 
 var SRC_FILE = 'stackdriver-errors.js';
 var DEST = 'dist/';
+
+var dependencies = [
+    './node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js',
+];
 
 gulp.task('lint', function() {
   return gulp.src(SRC_FILE)
@@ -36,8 +41,9 @@ gulp.task('test', function () {
 });
 
 gulp.task('dist', function() {
-  return gulp.src(SRC_FILE)
+  return gulp.src(dependencies.concat(SRC_FILE))
     .pipe(sourcemaps.init())
+    .pipe(concat(SRC_FILE.replace('.js', '-concat.js')))
     // This will output the non-minified version
     .pipe(gulp.dest(DEST))
     // This will minify and rename to stackdriver-errors.min.js
