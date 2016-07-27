@@ -53,6 +53,24 @@ window.onerror(null, null, null, null, new Error('Test: Something broke!'));
 
 ## Setup
 
+Here are all the initialization options available: 
+
+```HTML
+<!-- Warning: This is an experimental library, do not use it on production environments -->
+<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.1/dist/stackdriver-errors-concat.min.js"></script>
+<script type="text/javascript">
+var errorHandler = new StackdriverErrorReporting();
+errorHandler.init({
+  key: '<my-api-key>',
+  projectId: '<my-project-id>',
+  service: '<my-service>',              // (optional)
+  version: '<my-service-version>'       // (optional)
+  // reportUncaughtExceptions: false    // (optional) Set to false to stop reporting unhandled exceptions.
+  // disabled: true                     // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
+});
+</script>
+```
+
 You can change your code to report errors:
 
 When catching an exception:
