@@ -21,7 +21,7 @@ This **experimental** library provides Stackdriver Error Reporting support for c
 
 1. **Load and initialize the experimental library**
 
-  Add this line in your HTML code, before `</head>`:
+  Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and `<my-project-id>` with your API key and Google Cloud project ID string:
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
@@ -29,8 +29,8 @@ This **experimental** library provides Stackdriver Error Reporting support for c
 <script type="text/javascript">
 var errorHandler = new StackdriverErrorReporting();
 errorHandler.init({
-  key: 'my-api-key',
-  projectId: 'my-project-id'
+  key: '<my-api-key>',
+  projectId: '<my-project-id>'
 });
 </script>
 ```
