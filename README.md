@@ -30,8 +30,7 @@ This **experimental** library provides Stackdriver Error Reporting support for c
 var errorHandler = new StackdriverErrorReporting();
 errorHandler.init({
   key: 'my-api-key',
-  projectId: 'my-project-id',
-  service: 'my-service-name'
+  projectId: 'my-project-id'
 });
 </script>
 ```
