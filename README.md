@@ -25,7 +25,7 @@ This **experimental** library provides Stackdriver Error Reporting support for c
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
-<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.1/dist/stackdriver-errors.min.js"></script>
+<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.1/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 var errorHandler = new StackdriverErrorReporting();
 errorHandler.init({
