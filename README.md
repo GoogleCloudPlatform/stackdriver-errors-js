@@ -36,26 +36,36 @@ errorHandler.init({
 </script>
 ```
 
-  And that's all you need to do. Unhandled exception will now automatically be reported to your project.
-  Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view them.
 
-  Additionally, you can change your code to report errors:
+And that's all you need to do! Unhandled exceptions will now automatically be reported to your project.
+  
+**Test your setup**
 
-  When catching an exception:
+Open the page that you instrumented, open the Devtools console and enter the following to trigger an unhandled exception:
 
-  ```JS
-  try {
-    doSomethingRisky();
-  } catch (e) {
-    errorHandler.report(e);
-  }
-  ```
+```window.onerror(null, null, null, null, new Error('Test: Something broke!'));```
 
-  or anytime:
+  Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view the error.
 
-  ```JS
-  errorHandler.report('Something broke!');
-  ```
+## Setup
+
+You can change your code to report errors:
+
+When catching an exception:
+
+```JS
+try {
+  doSomethingRisky();
+} catch (e) {
+  errorHandler.report(e);
+}
+```
+
+or anytime:
+
+```JS
+errorHandler.report('Something broke!');
+```
 
 ## FAQ
 
