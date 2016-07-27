@@ -7,7 +7,9 @@
 [![Dependency Status](https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js.svg)](https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js)
 
 This **experimental** library provides Stackdriver Error Reporting support for client-side web JavaScript applications.
-[Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. Here's an introductory video:
+[Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. For server-side Node.js error reporting, use [this other library](https://github.com/GoogleCloudPlatform/cloud-errors-nodejs).
+
+Here's an introductory video:
 
 [![Learn about Error Reporting in Stackdriver](https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg)](https://www.youtube.com/watch?v=cVpWVD75Hs8)
 
