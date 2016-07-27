@@ -44,7 +44,7 @@ Open the page that you instrumented, open the Devtools console and enter the fol
 
 ```window.onerror(null, null, null, null, new Error('Test: Something broke!'));```
 
-  Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view the error.
+  Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view the error and opt-in to notifications on new errors.
 
 ## Setup
 
