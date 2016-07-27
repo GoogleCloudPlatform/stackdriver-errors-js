@@ -81,8 +81,7 @@ A: Not yet.
 
 ## Developing the library
 
-Install developer dependencies `npm install --dev`
+Install developer dependencies with `npm install --dev` and install `gulp` with `npm install -g gulp`
 
-Run `gulp` to test your changes.
-
-Run `gulp dist` generates the minified version.
+* Run `gulp` to test your changes.
+* Run `gulp dist` generates the minified version.
