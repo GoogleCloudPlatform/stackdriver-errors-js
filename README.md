@@ -55,6 +55,8 @@ window.onerror(null, null, null, null, new Error('Test: Something broke!'));
 
 ## Setup
 
+### Initialization
+
 Here are all the initialization options available:
 
 ```HTML
@@ -72,6 +74,8 @@ errorHandler.init({
 });
 </script>
 ```
+
+### Usage
 
 You can change your code to report errors:
 
@@ -91,13 +95,20 @@ or anytime:
 errorHandler.report('Something broke!');
 ```
 
+### Source maps
+
+Only publicly available JavaScript source maps are supported.
+
+Your minified file need to be appended with a comment directive to your source map file:
+```JS
+//# sourceMappingURL=http://example.com/path/to/your/sourcemap.map
+```
+
 ## FAQ
 
-**Q: Should I use this code in my production application?**
-A: This is an experimental library. We do not recommend using it on production yet.
+**Q: Should I use this code in my production application?** A: This is an experimental library. We do not recommend using it on production yet.
 
-**Q: Are source maps supported?**
-A: Not yet.
+**Q: Are private source maps supported?** A: No
 
 ## Developing the library
 
