@@ -53,4 +53,13 @@ gulp.task('dist', function() {
     .pipe(gulp.dest(DEST));
 });
 
+gulp.task('min-demo', function() {
+  return gulp.src('demo/demo.js')
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(sourcemaps.write('maps'))
+    .pipe(gulp.dest('demo'));
+});
+
 gulp.task('default', ['lint', 'test']);
