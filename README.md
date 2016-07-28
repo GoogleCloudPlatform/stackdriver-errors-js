@@ -106,4 +106,4 @@ Install developer dependencies with `npm install --dev` and install `gulp` with 
 * Run `gulp` to test your changes.
 * Run `gulp dist` generates the minified version.
 
-Start a web server and open `demo.html` to test reporting errors from the local library with your API key and project ID.
+Start a web server at the root of this repo and open `demo/demo.html` to test reporting errors from the local library with your API key and project ID.
