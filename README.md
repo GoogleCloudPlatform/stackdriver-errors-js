@@ -42,7 +42,7 @@ errorHandler.init({
 
 
 And that's all you need to do! Unhandled exceptions will now automatically be reported to your project.
-  
+
 **Test your setup**
 
 Open the page that you instrumented, open the Devtools console and enter the following to trigger an unhandled exception:
@@ -55,7 +55,7 @@ window.onerror(null, null, null, null, new Error('Test: Something broke!'));
 
 ## Setup
 
-Here are all the initialization options available: 
+Here are all the initialization options available:
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
@@ -105,3 +105,5 @@ Install developer dependencies with `npm install --dev` and install `gulp` with 
 
 * Run `gulp` to test your changes.
 * Run `gulp dist` generates the minified version.
+
+Start a web server and open `demo.html` to test reporting errors from the local library with your API key and project ID.
