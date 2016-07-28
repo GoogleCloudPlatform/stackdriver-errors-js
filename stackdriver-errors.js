@@ -99,7 +99,9 @@
       payload.message = err.toString();
       for(var s = firstFrameIndex; s < stack.length; s++) {
         payload.message += '\n';
-        payload.message += stack[s].source;
+        // reconstruct the stackframe to look like a JS stackframe.
+        // stack[s].source should not be used because not populated created from source map.
+        payload.message += ['    at ', stack[s].getFunctionName(), ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
       that.sendErrorPayload(payload, callback);
     });
