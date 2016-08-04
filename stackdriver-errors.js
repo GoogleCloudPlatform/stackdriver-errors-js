@@ -55,8 +55,16 @@
     // Register as global error handler if requested
     var that = this;
     if(this.reportUncaughtExceptions) {
+      var oldErrorHandler = function(){};
+      if(window.onerror) {
+        oldErrorHandler = window.onerror;
+      }
+
       window.onerror = function(message, source, lineno, colno, error) {
-        that.report(error);
+        if(error){
+          that.report(error);  
+        }
+        oldErrorHandler(message, source, lineno, colno, error);
         return true;
       };
     }
@@ -114,12 +122,12 @@
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    xhr.send(JSON.stringify(payload));
     xhr.onloadend = function() {
       return typeof callback === 'function' && callback();
     };
     xhr.onerror = function(e) {
       return typeof callback === 'function' && callback(e);
     };
+    xhr.send(JSON.stringify(payload));
   };
 })(this);

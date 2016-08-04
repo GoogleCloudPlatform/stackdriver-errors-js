@@ -18,7 +18,17 @@ var expect = chai.expect;
 var errorHandler;
 var xhr, requests;
 
+/** Helper function testing if a given message has been reported */
+function expectRequestWithMessage(message) {
+  expect(requests.length).to.equal(1);
+  var sentBody = JSON.parse(requests[0].requestBody);
+  expect(sentBody).to.include.keys('message');
+  expect(sentBody.message).to.contain(message);
+}
+
 beforeEach(function() {
+  window.onerror= function(){};
+
   errorHandler = new StackdriverErrorReporting();
 
   xhr = sinon.useFakeXMLHttpRequest();
@@ -80,10 +90,7 @@ describe('Reporting errors', function () {
   it('should report error messages with location', function (done) {
     var message = 'Something broke!';
     errorHandler.report(message, function() {
-      expect(requests.length).to.equal(1);
-
-      var sentBody = JSON.parse(requests[0].requestBody);
-      expect(sentBody.message).to.contain(message);
+      expectRequestWithMessage(message);
       done();
     });
   });
@@ -96,13 +103,45 @@ describe('Reporting errors', function () {
       throw new TypeError(message);
     } catch(e) {
       errorHandler.report(e, function() {
-        expect(requests.length).to.equal(1);
-        var sentBody = JSON.parse(requests[0].requestBody);
-        expect(sentBody).to.include.keys('message');
-        expect(sentBody.message).to.contain(message);
-
+        expectRequestWithMessage(message);
         done();
       });
+    }
+  });
+
+});
+
+describe('Unhandled exceptions', function () {
+
+  it('should be reported by default', function (done) {
+    errorHandler.init({key:'key', projectId:'projectId'});
+
+    var message = 'custom message';
+    try {
+      throw new TypeError(message);
+    } catch(e) {
+      window.onerror(message, 'test.js', 42, 42, e);
+
+      setTimeout(function(){
+        expectRequestWithMessage(message);
+        done();
+      }, 10);
+    }
+  });
+
+  it('should keep calling previous error handler if already present', function (done) {
+    var originalOnErrorCalled = false;
+    window.onerror = function(){ originalOnErrorCalled = true;};
+
+    errorHandler.init({key:'key', projectId:'projectId'});
+
+    var message = 'custom message';
+    try {
+      throw new TypeError(message);
+    } catch(e) {
+      window.onerror(message, 'test.js', 42, 42, e);
+      expect(originalOnErrorCalled).to.be.true;
+      done();
     }
   });
 
