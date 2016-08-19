@@ -32,8 +32,8 @@ Here's an introductory video:
 <!-- Warning: This is an experimental library, do not use it on production environments -->
 <script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.3/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
-var errorHandler = new StackdriverErrorReporting();
-errorHandler.init({
+var errorHandler = new StackdriverErrorReporter();
+errorHandler.start({
   key: '<my-api-key>',
   projectId: '<my-project-id>'
 });
@@ -63,8 +63,8 @@ Here are all the initialization options available:
 <!-- Warning: This is an experimental library, do not use it on production environments -->
 <script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.3/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
-var errorHandler = new StackdriverErrorReporting();
-errorHandler.init({
+var errorHandler = new StackdriverErrorReporter();
+errorHandler.start({
   key: '<my-api-key>',
   projectId: '<my-project-id>',
   service: '<my-service>',              // (optional)

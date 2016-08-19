@@ -17,13 +17,18 @@
   "use strict";
 
   /**
-   * An Error handler that sends errors to the Stackdriver Error Reporting API.
+   * URL endpoint of the Stackdriver Error Reporting report API.
    */
-  var StackdriverErrorReporting = function() {};
-  exports.StackdriverErrorReporting = StackdriverErrorReporting;
+  var baseAPIUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
 
   /**
-   * Initialize the StackdriverErrorReporting object.
+   * An Error handler that sends errors to the Stackdriver Error Reporting API.
+   */
+  var StackdriverErrorReporter = function() {};
+  exports.StackdriverErrorReporter = StackdriverErrorReporter;
+
+  /**
+   * Initialize the StackdriverErrorReporter object.
    * @param {Object} config - the init configuration.
    * @param {String} config.key - the API key to use to call the API.
    * @param {String} config.projectId - the Google Cloud Platform project ID to report errors to.
@@ -32,7 +37,7 @@
    * @param {Boolean} [config.reportUncaughtExceptions=true] - Set to false to stop reporting unhandled exceptions.
    * @param {Boolean} [config.disabled=false] - Set to true to not report errors when calling report(), this can be used when developping locally.
    */
-  StackdriverErrorReporting.prototype.init = function(config) {
+  StackdriverErrorReporter.prototype.start = function(config) {
     if(!config.key) {
       throw new Error('Cannot initialize: No API key provided.');
     }
@@ -42,23 +47,17 @@
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
-    this.serviceContext = {service: 'web'};
-    if(config.service) {
-      this.serviceContext.service = config.service;
-    }
+    this.serviceContext = {service: config.service || 'web'};
     if(config.version) {
       this.serviceContext.version = config.version;
     }
-    this.reportUncaughtExceptions = config.reportUncaughtExceptions || true;
+    this.reportUncaughtExceptions = !(config.reportUncaughtExceptions === false);
     this.disabled = config.disabled || false;
 
     // Register as global error handler if requested
     var that = this;
     if(this.reportUncaughtExceptions) {
-      var oldErrorHandler = function(){};
-      if(window.onerror) {
-        oldErrorHandler = window.onerror;
-      }
+      var oldErrorHandler = window.onerror || function(){};
 
       window.onerror = function(message, source, lineno, colno, error) {
         if(error){
@@ -73,8 +72,9 @@
   /**
    * Report an error to the Stackdriver Error Reporting API
    * @param {Error|String} err - The Error object or message string to report.
+   * @param callback - Calback function to be called once error has been reported.
    */
-  StackdriverErrorReporting.prototype.report = function(err, callback) {
+  StackdriverErrorReporter.prototype.report = function(err, callback) {
     if(this.disabled) {
       return typeof callback === 'function' && callback();
     }
@@ -103,21 +103,21 @@
       firstFrameIndex = 1;
     }
     var that = this;
+    // This will use sourcemaps and normalize the stack frames
     StackTrace.fromError(err).then(function(stack){
       payload.message = err.toString();
       for(var s = firstFrameIndex; s < stack.length; s++) {
         payload.message += '\n';
-        // reconstruct the stackframe to look like a JS stackframe.
-        // stack[s].source should not be used because not populated created from source map.
+        // Reconstruct the stackframe to a JS stackframe as expected by Error Reporting parsers.
+        // stack[s].source should not be used because not populated when created from source map.
         payload.message += ['    at ', stack[s].getFunctionName(), ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
       that.sendErrorPayload(payload, callback);
     });
   };
 
-  StackdriverErrorReporting.prototype.sendErrorPayload = function(payload, callback) {
-    var baseUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
-    var url = baseUrl + this.projectId + "/events:report?key=" + this.apiKey;
+  StackdriverErrorReporter.prototype.sendErrorPayload = function(payload, callback) {
+    var url = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);

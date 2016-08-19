@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var StackdriverErrors = new StackdriverErrorReporting();
+var StackdriverErrors = new StackdriverErrorReporter();
 
 function updateConfig() {
   var key = document.getElementById('input-apikey').value;
@@ -22,7 +22,7 @@ function updateConfig() {
   localStorage.setItem('key', key);
   localStorage.setItem('projectId', projectId);
 
-  StackdriverErrors.init({
+  StackdriverErrors.start({
     key: key,
     projectId: projectId,
     service: 'webapp',

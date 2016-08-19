@@ -29,7 +29,7 @@ function expectRequestWithMessage(message) {
 beforeEach(function() {
   window.onerror= function(){};
 
-  errorHandler = new StackdriverErrorReporting();
+  errorHandler = new StackdriverErrorReporter();
 
   xhr = sinon.useFakeXMLHttpRequest();
   xhr.useFilters = true;
@@ -51,21 +51,21 @@ beforeEach(function() {
 
 describe('Initialization', function () {
  it('should have default service', function () {
-   errorHandler.init({key:'key', projectId:'projectId'});
+   errorHandler.start({key:'key', projectId:'projectId'});
    expect(errorHandler.serviceContext.service).to.equal('web');
  });
 
  it('should by default report uncaught exceptions', function () {
-   errorHandler.init({key:'key', projectId:'projectId'});
+   errorHandler.start({key:'key', projectId:'projectId'});
    expect(errorHandler.reportUncaughtExceptions).to.equal(true);
  });
 
  it('should fail if no API key', function () {
-   expect(function() {errorHandler.init({projectId:'projectId'});}).to.throw(Error, /API/);
+   expect(function() {errorHandler.start({projectId:'projectId'});}).to.throw(Error, /API/);
  });
 
  it('should fail if no project ID', function () {
-   expect(function() {errorHandler.init({key:'key'});}).to.throw(Error, /project/);
+   expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
  });
 
 });
@@ -73,7 +73,7 @@ describe('Initialization', function () {
 describe('Disabling', function () {
 
  it('should not report errors if disabled', function (done) {
-   errorHandler.init({key:'key', projectId:'projectId', disabled: true});
+   errorHandler.start({key:'key', projectId:'projectId', disabled: true});
     errorHandler.report('do not report', function() {
       expect(requests.length).to.equal(0);
       done();
@@ -84,7 +84,7 @@ describe('Disabling', function () {
 
 describe('Reporting errors', function () {
   beforeEach(function() {
-    errorHandler.init({key:'key', projectId:'projectId'});
+    errorHandler.start({key:'key', projectId:'projectId'});
   });
 
   it('should report error messages with location', function (done) {
@@ -114,7 +114,7 @@ describe('Reporting errors', function () {
 describe('Unhandled exceptions', function () {
 
   it('should be reported by default', function (done) {
-    errorHandler.init({key:'key', projectId:'projectId'});
+    errorHandler.start({key:'key', projectId:'projectId'});
 
     var message = 'custom message';
     try {
@@ -133,7 +133,7 @@ describe('Unhandled exceptions', function () {
     var originalOnErrorCalled = false;
     window.onerror = function(){ originalOnErrorCalled = true;};
 
-    errorHandler.init({key:'key', projectId:'projectId'});
+    errorHandler.start({key:'key', projectId:'projectId'});
 
     var message = 'custom message';
     try {
