@@ -1,0 +1,17 @@
+<!doctype html>
+<html ng-app="demoApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
+    <script src="demo-angular.js"></script>
+  </head>
+  <body>
+    <h2>Todo</h2>
+    <div ng-controller="DemoController as demo">
+      <form ng-submit="demo.triggerCrash()">
+        <input type="text" ng-model="demo.customText"  size="30"
+               placeholder="add custom text here">
+        <input class="btn-primary" type="submit" value="Crash">
+      </form>
+    </div>
+  </body>
+</html>
