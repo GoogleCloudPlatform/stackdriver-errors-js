@@ -116,7 +116,7 @@ angular.module('myAngularApp', [])
 
 ### Usage
 
-Uncaught exception in angular expressions will be reported to Stackdriver Error Reporting using this service.
+Uncaught exception in angular expressions will now be reported to Stackdriver Error Reporting.
 
 If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { $exceptionHandler(e); }` or simply `$exceptionHandler('Something broke!');`.
 
