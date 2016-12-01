@@ -53,14 +53,15 @@ Open the page that you instrumented, open the Devtools console and enter the fol
 
   Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view the error and opt-in to notifications on new errors.
 
-## Setup
+
+## Setup for JavaScript
 
 ### Initialization
 
 Here are all the initialization options available:
 
 ```HTML
-<!-- Warning: This is an experimental library, do not use it on production environments -->
+<!-- Warning: This is an experimental library -->
 <script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.4/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 var errorHandler = new StackdriverErrorReporter();
@@ -76,6 +77,8 @@ errorHandler.start({
 ```
 
 ### Usage
+
+Unhandled exception will now automatically be reported to Stackdriver Error Reporting.
 
 You can change your code to report errors:
 
@@ -103,6 +106,42 @@ Your minified file need to be appended with a comment directive to your source m
 ```JS
 //# sourceMappingURL=http://example.com/path/to/your/sourcemap.map
 ```
+
+
+## Setup for AngularJS
+
+### Initialization
+
+1. Load the `dist/stackdriver-errors-concat.min.js` JavaScript module.
+
+2. Implement a new [exception handler](https://docs.angularjs.org/api/ng/service/$exceptionHandler) for your AngularJS application:
+
+```JS
+angular.module('yourApp', [])
+
+  .factory('$exceptionHandler', ['$log', '$window', function($log, $window) {
+    var StackdriverErrors = new $window.StackdriverErrorReporter();
+    StackdriverErrors.start({
+      key: '<my-api-key>',
+      projectId: '<my-project-id>',
+      service: '<my-service>',              // (optional)
+      version: '<my-service-version>'       // (optional)
+    });
+
+    return function(exception, cause) {
+      StackdriverErrors.report(exception);
+      $log.warn('Reported error:', exception, cause);
+    };
+  }])
+```
+
+### Usage
+
+Uncaught exception in angular expressions will be reported to Stackdriver Error Reporting using this service.
+
+If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { $exceptionHandler(e); }` or simply `$exceptionHandler(e);`.
+
+
 
 ## FAQ
 
