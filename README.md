@@ -80,23 +80,7 @@ errorHandler.start({
 
 Unhandled exception will now automatically be reported to Stackdriver Error Reporting.
 
-You can change your code to report errors:
-
-When catching an exception:
-
-```JS
-try {
-  doSomethingRisky();
-} catch (e) {
-  errorHandler.report(e);
-}
-```
-
-or anytime:
-
-```JS
-errorHandler.report('Something broke!');
-```
+You can also change your application code to report errors: `try { ... } catch(e) { errorHandler.report(e); }` or simply `errorHandler.report('Something broke!');`.
 
 ### Source maps
 
@@ -139,7 +123,7 @@ angular.module('yourApp', [])
 
 Uncaught exception in angular expressions will be reported to Stackdriver Error Reporting using this service.
 
-If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { $exceptionHandler(e); }` or simply `$exceptionHandler(e);`.
+If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { $exceptionHandler(e); }` or simply `$exceptionHandler('Something broke!');`.
 
 
 
