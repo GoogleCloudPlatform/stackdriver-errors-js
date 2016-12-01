@@ -1,7 +1,6 @@
 # Experimental Client-side JavaScript library for Stackdriver Error Reporting
 
 > **This is not an official Google product.** This module is experimental and may not be ready for use.
-> This module uses APIs that may be undocumented and are subject to change without notice.
 
 [![Build Status](https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js.svg?branch=master)](https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js)
 [![Dependency Status](https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js.svg)](https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js)
@@ -124,7 +123,7 @@ If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { 
 
 ## FAQ
 
-**Q: Should I use this code in my production application?** A: This is an experimental library. We do not recommend using it on production yet.
+**Q: Should I use this code in my production application?** A: This is an experimental library provided without any guarantee or official support. We do not recommend using it on production without performing a review of its code.
 
 **Q: Are private source maps supported?** A: No
 
