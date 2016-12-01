@@ -17,16 +17,13 @@ Here's an introductory video:
 
 1. You need a [Google Cloud project](https://console.cloud.google.com).
 1. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
+1. Create an browser API key: Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
 
 ## Quickstart
 
-1. **Create an API key:**
+**Load and initialize the experimental library**
 
-  Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
-
-1. **Load and initialize the experimental library**
-
-  Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and `<my-project-id>` with your API key and Google Cloud project ID string:
+Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and `<my-project-id>` with your API key and Google Cloud project ID string:
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
@@ -39,8 +36,6 @@ errorHandler.start({
 });
 </script>
 ```
-
-
 And that's all you need to do! Unhandled exceptions will now automatically be reported to your project.
 
 **Test your setup**
