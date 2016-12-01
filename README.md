@@ -96,7 +96,7 @@ Your minified file need to be appended with a comment directive to your source m
 2. Implement a new [exception handler](https://docs.angularjs.org/api/ng/service/$exceptionHandler) for your AngularJS application:
 
 ```JS
-angular.module('yourApp', [])
+angular.module('myAngularApp', [])
 
   .factory('$exceptionHandler', ['$log', '$window', function($log, $window) {
     var StackdriverErrors = new $window.StackdriverErrorReporter();
