@@ -26,7 +26,7 @@ Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
-<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.5/dist/stackdriver-errors-concat.min.js"></script>
+<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.4/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 var errorHandler = new StackdriverErrorReporter();
 errorHandler.start({
@@ -56,7 +56,7 @@ Here are all the initialization options available:
 
 ```HTML
 <!-- Warning: This is an experimental library -->
-<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.5/dist/stackdriver-errors-concat.min.js"></script>
+<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.4/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 var errorHandler = new StackdriverErrorReporter();
 errorHandler.start({
