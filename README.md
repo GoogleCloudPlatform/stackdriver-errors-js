@@ -119,7 +119,88 @@ Uncaught exception in angular expressions will now be reported to Stackdriver Er
 
 If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { $exceptionHandler(e); }` or simply `$exceptionHandler('Something broke!');`.
 
+## Setup for ReactJS
 
+Follow the general instructions denoted in _Setup for JavaScript_ to load and initialize the library.  
+
+There is nothing specific that needs to be done with React, other than making sure to initialize the library in your root entry point(typically `index.js`).
+
+## Best Practices
+
+### Only reporting in the production environment with Webpack
+
+If using webpack and the `DefinePlugin`, it is advisable to wrap the initialization logic to only occur in your production environment.  Otherwise, with local development you will receive 403s if you restricted your API key to your production environment(which is _HIGHLY_ recommended).  The code for this would look something along these lines:
+
+```javascript
+// webpack.production.js
+// The rest of your webpack configuration
+// ...
+plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
+  // Your other plugins
+]
+// ...
+// The rest of your webpack configuration
+```
+
+```javascript
+// index.js
+const environment = process.env.NODE_ENV; 
+
+if (environment === 'production') {
+  const errorHandler = new StackdriverErrorReporter();
+  errorHandler.start({
+    key: '<my-project-id>',
+    projectId: '<my-project-id>',
+    service: '<my-service>',              // (optional)
+    version: '<my-service-version>'       // (optional)
+  });
+}    
+```
+
+### Usage as a utility
+
+If you would like to use the error logger throughout your application, there are many options that exist.  The simplest is to pull the initialization logic into its own file and reference it as necessary throughout your application as a module.  An example would be as follows:
+
+```javascript
+// errorHandlerUtility.js
+
+const environment = process.env.NODE_ENV;
+
+let errorHandler;
+
+if (environment === 'production') {
+
+  errorHandler = new StackdriverErrorReporter(); 
+  errorHandler.start({
+    key: '<my-project-id>',
+    projectId: '<my-project-id>',
+    service: '<my-service>',              // (optional)
+    version: '<my-service-version>'       // (optional)
+  });
+
+} else {
+  errorHandler = console.error; 
+}
+
+export default errorHandler;
+
+```
+
+Consumption of the errorHandlerUtility would essentially follow the following pattern:
+
+```javascript
+// MyComponent.jsx
+import errorHandler from './errorHandlerUtility';
+
+// Some example code that throws an error
+.catch(error) {
+  errorHandler.report(error);
+}
+
+```
 
 ## FAQ
 
