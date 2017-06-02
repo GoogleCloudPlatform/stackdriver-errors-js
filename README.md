@@ -206,7 +206,7 @@ import errorHandler from './errorHandlerUtility';
 
 **Q: Should I use this code in my production application?** A: This is an experimental library provided without any guarantee or official support. We do not recommend using it on production without performing a review of its code.
 
-**Q: Are private source maps supported?** A: No
+**Q: Are private source maps supported?** A: No, see [#4](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/issues/4)
 
 ## Developing the library
 
