@@ -220,7 +220,9 @@ Start a web server at the root of this repo and open `demo/demo.html` to test re
 
 ## Creating a new release
 
-* find and replace the version number in README and in package.json
+* find and replace the version number package.json and commit
 * create a new git tag: `git tag v0.0.x`
 * push tag `git push --tags`
 * Create a [GitHub Release](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/releases)
+* update on npm: `npm publish`
+* update the README to use this new published version in setup instructions and commit
