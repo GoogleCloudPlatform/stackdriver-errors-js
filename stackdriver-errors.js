@@ -51,7 +51,7 @@
     if(config.version) {
       this.serviceContext.version = config.version;
     }
-    this.reportUncaughtExceptions = !(config.reportUncaughtExceptions === false);
+    this.reportUncaughtExceptions = config.reportUncaughtExceptions !== false;
     this.disabled = config.disabled || false;
 
     // Register as global error handler if requested
@@ -61,7 +61,7 @@
 
       window.onerror = function(message, source, lineno, colno, error) {
         if(error){
-          that.report(error);  
+          that.report(error);
         }
         oldErrorHandler(message, source, lineno, colno, error);
         return true;
