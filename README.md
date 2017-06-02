@@ -216,3 +216,11 @@ Install developer dependencies with `npm install --dev` and install `gulp` with 
 * Run `gulp dist` generates the minified version.
 
 Start a web server at the root of this repo and open `demo/demo.html` to test reporting errors from the local library with your API key and project ID.
+
+
+## Creating a new release
+
+* find and replace the version number in README and in package.json
+* create a new git tag: `git tag v0.0.x`
+* push tag `git push --tags`
+* Create a [GitHub Release](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/releases)
