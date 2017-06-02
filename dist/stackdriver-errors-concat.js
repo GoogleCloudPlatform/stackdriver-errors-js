@@ -55,7 +55,7 @@
     if(config.version) {
       this.serviceContext.version = config.version;
     }
-    this.reportUncaughtExceptions = !(config.reportUncaughtExceptions === false);
+    this.reportUncaughtExceptions = config.reportUncaughtExceptions !== false;
     this.disabled = config.disabled || false;
 
     // Register as global error handler if requested
@@ -65,7 +65,7 @@
 
       window.onerror = function(message, source, lineno, colno, error) {
         if(error){
-          that.report(error);  
+          that.report(error);
         }
         oldErrorHandler(message, source, lineno, colno, error);
         return true;
@@ -122,23 +122,16 @@
 
   StackdriverErrorReporter.prototype.sendErrorPayload = function(payload, callback) {
     var url = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
-    var CONTENT_TYPE = 'application/json; charset=UTF-8';
-    var payloadString = JSON.stringify(payload);
-    var end = typeof callback === 'function' ? callback : function () {};
-
-    // Check if we can use sendBeacon
-    if (typeof Blob !== 'undefined' && typeof navigator.sendBeacon === 'function') {
-      // create blob to set content type to JSON - needed for correct HTTP header
-      var blob = new Blob([payloadString], { type: CONTENT_TYPE });
-      navigator.sendBeacon(url, blob);
-      return end();
-    }
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
-    xhr.setRequestHeader('Content-Type', CONTENT_TYPE);
-    xhr.onloadend = end;
-    xhr.onerror = end;
-    xhr.send(payloadString);
+    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    xhr.onloadend = function() {
+      return typeof callback === 'function' && callback();
+    };
+    xhr.onerror = function(e) {
+      return typeof callback === 'function' && callback(e);
+    };
+    xhr.send(JSON.stringify(payload));
   };
 })(this);
