@@ -1,6 +1,6 @@
 {
   "name": "stackdriver-errors-js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Experimental client-side JavaScript library to report errors to Stackdriver Error Reporting",
   "main": "stackdriver-errors.js",
   "scripts": {
