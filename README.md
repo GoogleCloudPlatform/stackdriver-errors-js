@@ -50,13 +50,17 @@ Open the page that you instrumented, open the Devtools console and enter the fol
 
 ## Setup for JavaScript
 
+### Download the module
+
+We recommend using npm: `npm install stackdriver-errors-js --save`.
+
 ### Initialization
 
 Here are all the initialization options available:
 
 ```HTML
 <!-- Warning: This is an experimental library -->
-<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.0.7/dist/stackdriver-errors-concat.min.js"></script>
+<script src="node_modules/stackdriver-errors-js/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 var errorHandler = new StackdriverErrorReporter();
 errorHandler.start({
