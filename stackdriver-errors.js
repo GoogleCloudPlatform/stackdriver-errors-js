@@ -113,6 +113,14 @@
         payload.message += ['    at ', stack[s].getFunctionName(), ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
       that.sendErrorPayload(payload, callback);
+    }, function(reason) {
+      // Failure to extract stacktrace
+      payload.message = [
+        'Error extracting stack trace: ', reason, '\n',
+        err.toString(), '\n',
+        '    (', err.file, ':', err.line, ':', err.column, ')',
+      ].join('');
+      that.sendErrorPayload(payload, callback);
     });
   };
 
