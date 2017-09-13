@@ -67,9 +67,10 @@ errorHandler.start({
   key: '<my-api-key>',
   projectId: '<my-project-id>',
   service: '<my-service>',              // (optional)
-  version: '<my-service-version>'       // (optional)
+  version: '<my-service-version>',      // (optional)
   // reportUncaughtExceptions: false    // (optional) Set to false to stop reporting unhandled exceptions.
   // disabled: true                     // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
+  // context: {user: 'user1'}           // (optional) You can set the user later using setUser()
 });
 </script>
 ```
@@ -79,6 +80,8 @@ errorHandler.start({
 Unhandled exception will now automatically be reported to Stackdriver Error Reporting.
 
 You can also change your application code to report errors: `try { ... } catch(e) { errorHandler.report(e); }` or simply `errorHandler.report('Something broke!');`.
+
+You can set a user identifier at any time using `errorHandler.setUser('userId')`.
 
 ### Source maps
 
