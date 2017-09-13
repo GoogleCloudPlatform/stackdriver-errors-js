@@ -34,6 +34,8 @@
   /**
    * Initialize the StackdriverErrorReporter object.
    * @param {Object} config - the init configuration.
+   * @param {Object} [config.context={}] - the context in which the error occurred.
+   * @param {string} [config.context.user] - the user who caused or was affected by the error.
    * @param {String} config.key - the API key to use to call the API.
    * @param {String} config.projectId - the Google Cloud Platform project ID to report errors to.
    * @param {String} [config.service=web] - service identifier.
@@ -51,6 +53,7 @@
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
+    this.context = config.context || {};
     this.serviceContext = {service: config.service || 'web'};
     if(config.version) {
       this.serviceContext.version = config.version;
@@ -88,11 +91,10 @@
 
     var payload = {};
     payload.serviceContext = this.serviceContext;
-    payload.context = {
-      httpRequest: {
-        userAgent: window.navigator.userAgent,
-        url: window.location.href
-      }
+    payload.context = this.context;
+    payload.context.httpRequest = {
+      userAgent: window.navigator.userAgent,
+      url: window.location.href
     };
 
     var firstFrameIndex = 0;
@@ -117,6 +119,14 @@
         payload.message += ['    at ', stack[s].getFunctionName(), ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
       that.sendErrorPayload(payload, callback);
+    }, function(reason) {
+      // Failure to extract stacktrace
+      payload.message = [
+        'Error extracting stack trace: ', reason, '\n',
+        err.toString(), '\n',
+        '    (', err.file, ':', err.line, ':', err.column, ')',
+      ].join('');
+      that.sendErrorPayload(payload, callback);
     });
   };
 
@@ -133,5 +143,14 @@
       return typeof callback === 'function' && callback(e);
     };
     xhr.send(JSON.stringify(payload));
+  };
+
+  /**
+   * Set the user for the current context.
+   *
+   * @param {string} user - the unique identifier of the user (can be ID, email or custom token) or `undefined` if not logged in.
+   */
+  StackdriverErrorReporter.prototype.setUser = function(user) {
+    this.context.user = user;
   };
 })(this);
