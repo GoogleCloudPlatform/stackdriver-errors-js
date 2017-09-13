@@ -68,6 +68,16 @@ describe('Initialization', function () {
    expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
  });
 
+ it('should have default context', function () {
+   errorHandler.start({key:'key', projectId:'projectId'});
+   expect(errorHandler.context).to.eql({});
+ });
+
+ it('should allow to specify a default context', function () {
+   errorHandler.start({context: { user: '1234567890' }, key:'key', projectId:'projectId'});
+   expect(errorHandler.context).to.eql({ user: '1234567890' });
+ });
+
 });
 
 describe('Disabling', function () {
@@ -145,6 +155,16 @@ describe('Unhandled exceptions', function () {
     }
   });
 
+});
+
+describe('Setting user', function() {
+  it('should set the user in the context', function () {
+    errorHandler.start({key:'key', projectId:'projectId'});
+    errorHandler.setUser('1234567890');
+    expect(errorHandler.context.user).to.equal('1234567890');
+    errorHandler.setUser();
+    expect(errorHandler.context.user).to.equal(undefined);
+  });
 });
 
 afterEach(function() {
