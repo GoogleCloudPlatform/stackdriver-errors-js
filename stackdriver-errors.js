@@ -30,6 +30,8 @@
   /**
    * Initialize the StackdriverErrorReporter object.
    * @param {Object} config - the init configuration.
+   * @param {Object} [config.context={}] - the context in which the error occurred.
+   * @param {string} [config.context.user] - the user who caused or was affected by the error.
    * @param {String} config.key - the API key to use to call the API.
    * @param {String} config.projectId - the Google Cloud Platform project ID to report errors to.
    * @param {String} [config.service=web] - service identifier.
@@ -47,6 +49,7 @@
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
+    this.context = config.context || {};
     this.serviceContext = {service: config.service || 'web'};
     if(config.version) {
       this.serviceContext.version = config.version;
@@ -84,11 +87,10 @@
 
     var payload = {};
     payload.serviceContext = this.serviceContext;
-    payload.context = {
-      httpRequest: {
-        userAgent: window.navigator.userAgent,
-        url: window.location.href
-      }
+    payload.context = this.context;
+    payload.context.httpRequest = {
+      userAgent: window.navigator.userAgent,
+      url: window.location.href
     };
 
     var firstFrameIndex = 0;
