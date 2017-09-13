@@ -140,4 +140,13 @@
     };
     xhr.send(JSON.stringify(payload));
   };
+
+  /**
+   * Set the user for the current context.
+   *
+   * @param {string} user - the unique identifier of the user (can be ID, email or custom token) or `undefined` if not logged in.
+   */
+  StackdriverErrorReporter.prototype.setUser = function(user) {
+    this.context.user = user;
+  };
 })(this);
