@@ -38,6 +38,8 @@ function loadFromLocalStorage() {
 
   if(key && projectId) {
     updateConfig();
+  } else {
+    console.warn('No API key provided, Stackdriver not started.');
   }
 }
 loadFromLocalStorage();
