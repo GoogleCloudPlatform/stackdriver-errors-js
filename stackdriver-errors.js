@@ -112,7 +112,9 @@
         payload.message += '\n';
         // Reconstruct the stackframe to a JS stackframe as expected by Error Reporting parsers.
         // stack[s].source should not be used because not populated when created from source map.
-        payload.message += ['    at ', stack[s].getFunctionName(), ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
+        // 
+        // If functionName or methodName isn't available <anonymous> will be used as the name.
+        payload.message += ['    at ', stack[s].getFunctionName() || '<anonymous>', ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
       that.sendErrorPayload(payload, callback);
     }, function(reason) {
