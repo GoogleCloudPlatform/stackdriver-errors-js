@@ -141,11 +141,13 @@ describe('Reporting errors', function () {
     }
   });
 
-  it('should extract and send <anonymous> in stack traces', function (done) {
+  it('should set in stack traces when frame is anonymous', function (done) {
     var message = 'custom message';
     // PhantomJS only attaches a stack to thrown errors
     try {
-      throwError(message)
+      (function () {
+        throw new TypeError(message);
+      })()
     } catch(e) {
       errorHandler.report(e, function() {
         expectRequestWithMessage('<anonymous>');
