@@ -18,12 +18,21 @@ var expect = chai.expect;
 var errorHandler;
 var xhr, requests;
 
-/** Helper function testing if a given message has been reported */
+/** 
+ * Helper function testing if a given message has been reported
+ */
 function expectRequestWithMessage(message) {
   expect(requests.length).to.equal(1);
   var sentBody = JSON.parse(requests[0].requestBody);
   expect(sentBody).to.include.keys('message');
   expect(sentBody.message).to.contain(message);
+}
+
+/**
+ * Helper for testing call stack reporting
+ */
+function throwError(message) {
+  throw new TypeError(message);
 }
 
 beforeEach(function() {
@@ -114,6 +123,34 @@ describe('Reporting errors', function () {
     } catch(e) {
       errorHandler.report(e, function() {
         expectRequestWithMessage(message);
+        done();
+      });
+    }
+  });
+
+  it('should extract and send functionName in stack traces', function (done) {
+    var message = 'custom message';
+    // PhantomJS only attaches a stack to thrown errors
+    try {
+      throwError(message)
+    } catch(e) {
+      errorHandler.report(e, function() {
+        expectRequestWithMessage('throwError');
+        done();
+      });
+    }
+  });
+
+  it('should set in stack traces when frame is anonymous', function (done) {
+    var message = 'custom message';
+    // PhantomJS only attaches a stack to thrown errors
+    try {
+      (function () {
+        throw new TypeError(message);
+      })()
+    } catch(e) {
+      errorHandler.report(e, function() {
+        expectRequestWithMessage('<anonymous>');
         done();
       });
     }
