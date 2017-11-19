@@ -26,12 +26,14 @@ Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
-<script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.2.0/dist/stackdriver-errors-concat.min.js"></script>
+<script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.2.0/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
-var errorHandler = new StackdriverErrorReporter();
-errorHandler.start({
-  key: '<my-api-key>',
-  projectId: '<my-project-id>'
+window.addEventListener('DOMContentLoaded', function() {
+  var errorHandler = new StackdriverErrorReporter();
+  errorHandler.start({
+    key: '<my-api-key>',
+    projectId: '<my-project-id>'
+  });
 });
 </script>
 ```
@@ -60,17 +62,19 @@ Here are all the initialization options available:
 
 ```HTML
 <!-- Warning: This is an experimental library -->
-<script src="node_modules/stackdriver-errors-js/dist/stackdriver-errors-concat.min.js"></script>
+<script defer src="node_modules/stackdriver-errors-js/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
-var errorHandler = new StackdriverErrorReporter();
-errorHandler.start({
-  key: '<my-api-key>',
-  projectId: '<my-project-id>',
-  service: '<my-service>',              // (optional)
-  version: '<my-service-version>',      // (optional)
-  // reportUncaughtExceptions: false    // (optional) Set to false to stop reporting unhandled exceptions.
-  // disabled: true                     // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
-  // context: {user: 'user1'}           // (optional) You can set the user later using setUser()
+window.addEventListener('DOMContentLoaded', function() {
+  var errorHandler = new StackdriverErrorReporter();
+  errorHandler.start({
+    key: '<my-api-key>',
+    projectId: '<my-project-id>',
+    service: '<my-service>',              // (optional)
+    version: '<my-service-version>',      // (optional)
+    // reportUncaughtExceptions: false    // (optional) Set to false to stop reporting unhandled exceptions.
+    // disabled: true                     // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
+    // context: {user: 'user1'}           // (optional) You can set the user later using setUser()
+  });
 });
 </script>
 ```
