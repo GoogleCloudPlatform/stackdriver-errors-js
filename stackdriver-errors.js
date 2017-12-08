@@ -40,15 +40,16 @@
    * @param {Boolean} [config.disabled=false] - Set to true to not report errors when calling report(), this can be used when developping locally.
    */
   StackdriverErrorReporter.prototype.start = function(config) {
-    if(!config.key) {
-      throw new Error('Cannot initialize: No API key provided.');
+    if(!config.key && !config.targetUrl) {
+      throw new Error('Cannot initialize: No API key or target url provided.');
     }
-    if(!config.projectId) {
-      throw new Error('Cannot initialize: No project ID provided.');
+    if(!config.projectId && !config.targetUrl) {
+      throw new Error('Cannot initialize: No project ID or target url provided.');
     }
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
+    this.targetUrl = config.targetUrl;
     this.context = config.context || {};
     this.serviceContext = {service: config.service || 'web'};
     if(config.version) {
@@ -129,7 +130,8 @@
   };
 
   StackdriverErrorReporter.prototype.sendErrorPayload = function(payload, callback) {
-    var url = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
+    var defaultUrl = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
+    var url = this.targetUrl || defaultUrl;
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
