@@ -44,7 +44,7 @@ beforeEach(function() {
       if(req.url.match('clouderrorreporting')) {
         requests.push(req);
       }
-      req.respond(200, {"Content-Type": "application/json"}, '{}');
+      req.respond(200, {'Content-Type': 'application/json'}, '{}');
     }, 1);
   };
 });
@@ -66,6 +66,13 @@ describe('Initialization', function () {
 
  it('should fail if no project ID', function () {
    expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
+ });
+
+ it('should fail if StackTrace is undefined', function () {
+  var stackTrace = window.StackTrace
+  delete window.StackTrace
+  expect(function() {errorHandler.start({projectId:'projectId', key:'key'});}).to.throw(Error, /StackTrace/);
+  window.StackTrace = stackTrace 
  });
 
  it('should have default context', function () {
