@@ -34,7 +34,7 @@ beforeEach(function() {
   xhr = sinon.useFakeXMLHttpRequest();
   xhr.useFilters = true;
   xhr.addFilter(function (method, url) {
-    return !url.match('clouderrorreporting');
+      return !url.match('clouderrorreporting');
   });
 
   requests = [];
@@ -44,58 +44,58 @@ beforeEach(function() {
       if(req.url.match('clouderrorreporting')) {
         requests.push(req);
       }
-      req.respond(200, {'Content-Type': 'application/json'}, '{}');
+      req.respond(200, {"Content-Type": "application/json"}, '{}');
     }, 1);
   };
 });
 
 describe('Initialization', function () {
-  it('should have default service', function () {
-    errorHandler.start({key:'key', projectId:'projectId'});
-    expect(errorHandler.serviceContext.service).to.equal('web');
-  });
+ it('should have default service', function () {
+   errorHandler.start({key:'key', projectId:'projectId'});
+   expect(errorHandler.serviceContext.service).to.equal('web');
+ });
 
-  it('should by default report uncaught exceptions', function () {
-    errorHandler.start({key:'key', projectId:'projectId'});
-    expect(errorHandler.reportUncaughtExceptions).to.equal(true);
-  });
+ it('should by default report uncaught exceptions', function () {
+   errorHandler.start({key:'key', projectId:'projectId'});
+   expect(errorHandler.reportUncaughtExceptions).to.equal(true);
+ });
 
-  it('should fail if no API key', function () {
-    expect(function() {errorHandler.start({projectId:'projectId'});}).to.throw(Error, /API/);
-  });
+ it('should fail if no API key', function () {
+   expect(function() {errorHandler.start({projectId:'projectId'});}).to.throw(Error, /API/);
+ });
 
-  it('should fail if no project ID', function () {
-    expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
-  });
+ it('should fail if no project ID', function () {
+   expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
+ });
 
-  it('should fail if StackTrace is undefined', function () {
-    var stackTrace = window.StackTrace
-    delete window.StackTrace
-    expect(function() {errorHandler.start({projectId:'projectId', key:'key'});}).to.throw(Error, /StackTrace/);
-    window.StackTrace = stackTrace 
-  });
+ it('should fail if StackTrace is undefined', function () {
+   var stackTrace = window.StackTrace
+   delete window.StackTrace
+   expect(function() {errorHandler.start({projectId:'projectId', key:'key'});}).to.throw(Error, /StackTrace/);
+   window.StackTrace = stackTrace 
+ });
 
-  it('should have default context', function () {
-    errorHandler.start({key:'key', projectId:'projectId'});
-    expect(errorHandler.context).to.eql({});
-  });
+ it('should have default context', function () {
+   errorHandler.start({key:'key', projectId:'projectId'});
+   expect(errorHandler.context).to.eql({});
+ });
 
-  it('should allow to specify a default context', function () {
-    errorHandler.start({context: { user: '1234567890' }, key:'key', projectId:'projectId'});
-    expect(errorHandler.context).to.eql({ user: '1234567890' });
-  });
+ it('should allow to specify a default context', function () {
+   errorHandler.start({context: { user: '1234567890' }, key:'key', projectId:'projectId'});
+   expect(errorHandler.context).to.eql({ user: '1234567890' });
+ });
 
 });
 
 describe('Disabling', function () {
 
-  it('should not report errors if disabled', function (done) {
-    errorHandler.start({key:'key', projectId:'projectId', disabled: true});
+ it('should not report errors if disabled', function (done) {
+   errorHandler.start({key:'key', projectId:'projectId', disabled: true});
     errorHandler.report('do not report', function() {
       expect(requests.length).to.equal(0);
       done();
     });
-  });
+ });
 
 });
 

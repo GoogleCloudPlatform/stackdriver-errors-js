@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 (function(exports) {
-  'use strict';
+  "use strict";
 
   /**
    * URL endpoint of the Stackdriver Error Reporting report API.
    */
-  var baseAPIUrl = 'https://clouderrorreporting.googleapis.com/v1beta1/projects/';
+  var baseAPIUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
 
   /**
    * An Error handler that sends errors to the Stackdriver Error Reporting API.
@@ -48,7 +48,7 @@
     }
     if(typeof StackTrace === 'undefined') {
       // Inform about missing dependency
-      throw new Error('Cannot initialize: StackTrace object is missing, check if concat.dist.js version of stackdriver-errors was loaded');
+      throw new Error('make sure you loaded “dist/stackdriver-errors-concat.js” or “dist/stackdriver-errors-concat.min.js”, or that you imported the “stacktrace-js” module');
     }
 
     this.apiKey = config.key;
@@ -131,7 +131,7 @@
   };
 
   StackdriverErrorReporter.prototype.sendErrorPayload = function(payload, callback) {
-    var url = baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey;
+    var url = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
