@@ -40,11 +40,11 @@
    * @param {Boolean} [config.disabled=false] - Set to true to not report errors when calling report(), this can be used when developping locally.
    */
   StackdriverErrorReporter.prototype.start = function(config) {
-    if(!config.key) {
-      throw new Error('Cannot initialize: No API key provided.');
+    if(!config.key && !config.targetUrl) {
+      throw new Error('Cannot initialize: No API key or target url provided.');
     }
-    if(!config.projectId) {
-      throw new Error('Cannot initialize: No project ID provided.');
+    if(!config.projectId && !config.targetUrl) {
+      throw new Error('Cannot initialize: No project ID or target url provided.');
     }
     if(typeof StackTrace === 'undefined') {
       // Inform about missing dependency
@@ -53,6 +53,7 @@
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
+    this.targetUrl = config.targetUrl;
     this.context = config.context || {};
     this.serviceContext = {service: config.service || 'web'};
     if(config.version) {
@@ -116,7 +117,9 @@
         payload.message += '\n';
         // Reconstruct the stackframe to a JS stackframe as expected by Error Reporting parsers.
         // stack[s].source should not be used because not populated when created from source map.
-        payload.message += ['    at ', stack[s].getFunctionName(), ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
+        // 
+        // If functionName or methodName isn't available <anonymous> will be used as the name.
+        payload.message += ['    at ', stack[s].getFunctionName() || '<anonymous>', ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
       that.sendErrorPayload(payload, callback);
     }, function(reason) {
@@ -131,7 +134,8 @@
   };
 
   StackdriverErrorReporter.prototype.sendErrorPayload = function(payload, callback) {
-    var url = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
+    var defaultUrl = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
+    var url = this.targetUrl || defaultUrl;
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
