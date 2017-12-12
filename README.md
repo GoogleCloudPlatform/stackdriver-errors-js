@@ -16,7 +16,7 @@ Here's an introductory video:
 
 1. You need a [Google Cloud project](https://console.cloud.google.com).
 1. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
-1. Create a browser API key: Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
+1. Create a browser API key: Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project. If this is not an option for your team, you can [use a custom url](#configuring-without-an-api-key) to send your errors to.
 
 ## Quickstart
 
@@ -132,9 +132,24 @@ If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { 
 
 ## Setup for ReactJS
 
-Follow the general instructions denoted in _Setup for JavaScript_ to load and initialize the library.  
+Follow the general instructions denoted in _Setup for JavaScript_ to load and initialize the library.
 
 There is nothing specific that needs to be done with React, other than making sure to initialize the library in your root entry point(typically `index.js`).
+
+## Configuring without an API key
+
+If you are in a situation where an API key is not an option but you already have an acceptable way to communicate with the Stackdriver API (e.g., a secure back end service running in App Engine), you can configure the endpoint that errors are sent to with the following:
+
+```javascript
+const errorHandler = new StackdriverErrorReporter();
+errorHandler.start({
+  targetUrl: '<my-custom-url>',
+  service: '<my-service>',              // (optional)
+  version: '<my-service-version>'       // (optional)
+});
+```
+
+where `targetUrl` is the url you'd like to send errors to and can be relative or absolute. This endpoint will need to support the [Report API endpoint](https://cloud.google.com/error-reporting/reference/rest/v1beta1/projects.events/report).
 
 ## Best Practices
 
@@ -168,7 +183,7 @@ if (environment === 'production') {
     service: '<my-service>',              // (optional)
     version: '<my-service-version>'       // (optional)
   });
-}    
+}
 ```
 
 ### Usage as a utility
