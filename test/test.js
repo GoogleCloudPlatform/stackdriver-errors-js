@@ -83,7 +83,11 @@ describe('Initialization', function () {
    expect(function() {errorHandler.start({projectId:'projectId', key:'key'});}).to.throw(Error, /StackTrace/);
    window.StackTrace = stackTrace 
  });
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 358212c9698ba898493fa6c5d7a069dcabd1607d
  it('should succeed if custom target url provided without API key or project id', function () {
    expect(function() {errorHandler.start({targetUrl:'custom-url'});}).to.not.throw();
  });
