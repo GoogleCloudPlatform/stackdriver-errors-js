@@ -46,6 +46,10 @@
     if(!config.projectId && !config.targetUrl) {
       throw new Error('Cannot initialize: No project ID or target url provided.');
     }
+    if(typeof StackTrace === 'undefined') {
+      // Inform about missing dependency
+      throw new Error('make sure you loaded “dist/stackdriver-errors-concat.js” or “dist/stackdriver-errors-concat.min.js”, or that you imported the “stacktrace-js” module');
+    }
 
     this.apiKey = config.key;
     this.projectId = config.projectId;
