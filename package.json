@@ -10,6 +10,12 @@
     "type": "git",
     "url": "https://github.com/GoogleCloudPlatform/stackdriver-errors-js"
   },
+  "scripts": {
+    "test": "gulp",
+    "dist": "gulp dist",
+    "lint": "gulp lint",
+    "start": "gulp min-demo"
+  },
   "keywords": [
     "stackdriver",
     "error",

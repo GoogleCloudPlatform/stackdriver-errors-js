@@ -18,12 +18,21 @@ var expect = chai.expect;
 var errorHandler;
 var xhr, requests;
 
-/** Helper function testing if a given message has been reported */
+/** 
+ * Helper function testing if a given message has been reported
+ */
 function expectRequestWithMessage(message) {
   expect(requests.length).to.equal(1);
   var sentBody = JSON.parse(requests[0].requestBody);
   expect(sentBody).to.include.keys('message');
   expect(sentBody.message).to.contain(message);
+}
+
+/**
+ * Helper for testing call stack reporting
+ */
+function throwError(message) {
+  throw new TypeError(message);
 }
 
 beforeEach(function() {
@@ -60,11 +69,11 @@ describe('Initialization', function () {
    expect(errorHandler.reportUncaughtExceptions).to.equal(true);
  });
 
- it('should fail if no API key', function () {
+ it('should fail if no API key or custom url', function () {
    expect(function() {errorHandler.start({projectId:'projectId'});}).to.throw(Error, /API/);
  });
 
- it('should fail if no project ID', function () {
+ it('should fail if no project ID or custom url', function () {
    expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
  });
 
@@ -73,6 +82,10 @@ describe('Initialization', function () {
    delete window.StackTrace
    expect(function() {errorHandler.start({projectId:'projectId', key:'key'});}).to.throw(Error, /StackTrace/);
    window.StackTrace = stackTrace 
+ });
+
+ it('should succeed if custom target url provided without API key or project id', function () {
+   expect(function() {errorHandler.start({targetUrl:'custom-url'});}).to.not.throw();
  });
 
  it('should have default context', function () {
@@ -100,32 +113,75 @@ describe('Disabling', function () {
 });
 
 describe('Reporting errors', function () {
-  beforeEach(function() {
-    errorHandler.start({key:'key', projectId:'projectId'});
-  });
-
-  it('should report error messages with location', function (done) {
-    var message = 'Something broke!';
-    errorHandler.report(message, function() {
-      expectRequestWithMessage(message);
-      done();
+  describe('Default configuration', function() {
+    beforeEach(function() {
+      errorHandler.start({key:'key', projectId:'projectId'});
     });
-  });
 
-
-  it('should extract and send stack traces from Errors', function (done) {
-    var message = 'custom message';
-    // PhantomJS only attaches a stack to thrown errors
-    try {
-      throw new TypeError(message);
-    } catch(e) {
-      errorHandler.report(e, function() {
+    it('should report error messages with location', function (done) {
+      var message = 'Something broke!';
+      errorHandler.report(message, function() {
         expectRequestWithMessage(message);
         done();
       });
-    }
+    });
+
+    it('should extract and send stack traces from Errors', function (done) {
+      var message = 'custom message';
+      // PhantomJS only attaches a stack to thrown errors
+      try {
+        throw new TypeError(message);
+      } catch(e) {
+        errorHandler.report(e, function() {
+          expectRequestWithMessage(message);
+          done();
+        });
+      }
+    });
+
+    it('should extract and send functionName in stack traces', function (done) {
+      var message = 'custom message';
+      // PhantomJS only attaches a stack to thrown errors
+      try {
+        throwError(message)
+      } catch(e) {
+        errorHandler.report(e, function() {
+          expectRequestWithMessage('throwError');
+          done();
+        });
+      }
+    });
+
+    it('should set in stack traces when frame is anonymous', function (done) {
+      var message = 'custom message';
+      // PhantomJS only attaches a stack to thrown errors
+      try {
+        (function () {
+          throw new TypeError(message);
+        })()
+      } catch(e) {
+        errorHandler.report(e, function() {
+          expectRequestWithMessage('<anonymous>');
+          done();
+        });
+      }
+    });
   });
 
+  describe('Custom target url configuration', function() {
+    it('should report error messages with custom url config', function (done) {
+      var targetUrl = 'config-uri-clouderrorreporting';
+      errorHandler.start({targetUrl:targetUrl});
+
+      var message = 'Something broke!';
+      errorHandler.report(message, function() {
+        expectRequestWithMessage(message);
+        expect(requests[0].url).to.equal(targetUrl);
+
+        done();
+      });
+    });
+  });
 });
 
 describe('Unhandled exceptions', function () {
