@@ -4,17 +4,14 @@
   "description": "Experimental client-side JavaScript library to report errors to Stackdriver Error Reporting",
   "main": "stackdriver-errors.js",
   "scripts": {
-    "test": "gulp test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/GoogleCloudPlatform/stackdriver-errors-js"
-  },
-  "scripts": {
     "test": "gulp",
     "dist": "gulp dist",
     "lint": "gulp lint",
     "start": "gulp min-demo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GoogleCloudPlatform/stackdriver-errors-js"
   },
   "keywords": [
     "stackdriver",
