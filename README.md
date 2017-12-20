@@ -26,7 +26,7 @@ Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
-<script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.3.0/dist/stackdriver-errors-concat.min.js"></script>
+<script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.4.0/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 window.addEventListener('DOMContentLoaded', function() {
   var errorHandler = new StackdriverErrorReporter();
