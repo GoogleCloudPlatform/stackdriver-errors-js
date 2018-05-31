@@ -208,7 +208,7 @@ if (environment === 'production') {
   });
 
 } else {
-  errorHandler = console.error;
+  errorHandler = {report: console.error};
 }
 
 export default errorHandler;
