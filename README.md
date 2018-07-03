@@ -16,7 +16,13 @@ Here's an introductory video:
 
 1. You need a [Google Cloud project](https://console.cloud.google.com).
 1. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
-1. Create a browser API key: Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project. If this is not an option for your team, you can [use a custom url](#configuring-without-an-api-key) to send your errors to.
+1. Create a browser API key: 
+
+  - Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
+  - Recommended: Use **Application restrictions** to restrict this key to your website.
+  - Recommended: Use **API restrictions** to limit this key to the *Stackdriver Error Reporting API*.
+
+If API keys are not an option for your team, you can [use a custom url](#configuring-without-an-api-key) to send your errors to your backend.
 
 ## Quickstart
 
