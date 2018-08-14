@@ -60,6 +60,7 @@
       this.serviceContext.version = config.version;
     }
     this.reportUncaughtExceptions = config.reportUncaughtExceptions !== false;
+    this.reportUnhandledPromiseRejections = config.reportUnhandledPromiseRejections !== false;
     this.disabled = config.disabled || false;
 
     // Register as global error handler if requested
@@ -72,6 +73,17 @@
           that.report(error);
         }
         oldErrorHandler(message, source, lineno, colno, error);
+        return true;
+      };
+    }
+    if(this.reportUnhandledPromiseRejections) {
+      var oldPromiseRejectionHandler = window.onunhandledrejection || function(){};
+
+      window.onunhandledrejection = function(promiseRejectionEvent) {
+        if(promiseRejectionEvent){
+          that.report(promiseRejectionEvent.reason);
+        }
+        oldPromiseRejectionHandler(promiseRejectionEvent.reason);
         return true;
       };
     }
