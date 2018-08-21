@@ -17,6 +17,7 @@ var expect = chai.expect;
 
 var errorHandler;
 var xhr, requests;
+var WAIT_FOR_STACKTRACE_FROMERROR = 15;
 
 /** 
  * Helper function testing if a given message has been reported
@@ -204,7 +205,7 @@ describe('Unhandled exceptions', function () {
       setTimeout(function(){
         expectRequestWithMessage(message);
         done();
-      }, 10);
+      }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 
@@ -223,7 +224,7 @@ describe('Unhandled exceptions', function () {
       setTimeout(function(){
         expect(originalOnErrorCalled).to.be.true;
         done();
-      }, 10);
+      }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 });
@@ -244,7 +245,7 @@ describe('Unhandled promise rejections', function () {
       setTimeout(function(){
         expectRequestWithMessage(message);
         done();
-      }, 10);
+      }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 
@@ -262,7 +263,7 @@ describe('Unhandled promise rejections', function () {
     setTimeout(function(){
       expect(originalOnUnhandledRejectionCalled).to.be.true;
       done();
-    }, 10);
+    }, WAIT_FOR_STACKTRACE_FROMERROR);
   });
 });
 
