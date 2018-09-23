@@ -16,7 +16,7 @@ Here's an introductory video:
 
 1. You need a [Google Cloud project](https://console.cloud.google.com).
 1. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
-1. Create a browser API key: 
+1. Create a browser API key:
 
   - Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
   - Recommended: Use **Application restrictions** to restrict this key to your website.
@@ -75,11 +75,12 @@ window.addEventListener('DOMContentLoaded', function() {
   errorHandler.start({
     key: '<my-api-key>',
     projectId: '<my-project-id>',
-    service: '<my-service>',              // (optional)
-    version: '<my-service-version>',      // (optional)
-    // reportUncaughtExceptions: false    // (optional) Set to false to stop reporting unhandled exceptions.
-    // disabled: true                     // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
-    // context: {user: 'user1'}           // (optional) You can set the user later using setUser()
+    service: '<my-service>',                    // (optional)
+    version: '<my-service-version>',            // (optional)
+    // reportUncaughtExceptions: false          // (optional) Set to false to stop reporting unhandled exceptions.
+    // reportUnhandledPromiseRejections: false  // (optional) Set to false to stop reporting unhandled promise rejections.
+    // disabled: true                           // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
+    // context: {user: 'user1'}                 // (optional) You can set the user later using setUser()
   });
 });
 </script>
