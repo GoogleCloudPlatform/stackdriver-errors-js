@@ -32,7 +32,7 @@ Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
-<script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.4.0/dist/stackdriver-errors-concat.min.js"></script>
+<script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.5.0/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 window.addEventListener('DOMContentLoaded', function() {
   var errorHandler = new StackdriverErrorReporter();
@@ -254,7 +254,7 @@ Start a web server at the root of this repo and open `demo/demo.html` to test re
 ## Creating a new release
 
 * find and replace the version number package.json and commit
-* create a new git tag: `git tag v0.0.x`
+* create a new git tag: `git tag v0.x.0`
 * push tag `git push --tags`
 * Create a [GitHub Release](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/releases)
 * update on npm: `npm publish`
