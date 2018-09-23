@@ -17,6 +17,7 @@ var expect = chai.expect;
 
 var errorHandler;
 var xhr, requests;
+var WAIT_FOR_STACKTRACE_FROMERROR = 15;
 
 /** 
  * Helper function testing if a given message has been reported
@@ -37,6 +38,7 @@ function throwError(message) {
 
 beforeEach(function() {
   window.onerror= function(){};
+  window.onunhandledrejection = function(){};
 
   errorHandler = new StackdriverErrorReporter();
 
@@ -67,6 +69,11 @@ describe('Initialization', function () {
  it('should by default report uncaught exceptions', function () {
    errorHandler.start({key:'key', projectId:'projectId'});
    expect(errorHandler.reportUncaughtExceptions).to.equal(true);
+ });
+
+ it('should by default report unhandled promise rejections', function () {
+   errorHandler.start({key:'key', projectId:'projectId'});
+   expect(errorHandler.reportUnhandledPromiseRejections).to.equal(true);
  });
 
  it('should fail if no API key or custom url', function () {
@@ -198,7 +205,7 @@ describe('Unhandled exceptions', function () {
       setTimeout(function(){
         expectRequestWithMessage(message);
         done();
-      }, 10);
+      }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 
@@ -213,11 +220,51 @@ describe('Unhandled exceptions', function () {
       throw new TypeError(message);
     } catch(e) {
       window.onerror(message, 'test.js', 42, 42, e);
-      expect(originalOnErrorCalled).to.be.true;
-      done();
+
+      setTimeout(function(){
+        expect(originalOnErrorCalled).to.be.true;
+        done();
+      }, WAIT_FOR_STACKTRACE_FROMERROR);
+    }
+  });
+});
+
+describe('Unhandled promise rejections', function () {
+
+  it('should be reported by default', function (done) {
+    errorHandler.start({key:'key', projectId:'projectId'});
+
+    var message = 'custom promise rejection message';
+    try {
+      throwError(message);
+    } catch(e) {
+      var promiseRejectionEvent = {reason: e};
+
+      window.onunhandledrejection(promiseRejectionEvent);
+
+      setTimeout(function(){
+        expectRequestWithMessage(message);
+        done();
+      }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 
+  it('should keep calling previous promise rejection handler if already present', function (done) {
+    var originalOnUnhandledRejectionCalled = false;
+    window.onunhandledrejection = function(){ originalOnUnhandledRejectionCalled = true;};
+
+    errorHandler.start({key:'key', projectId:'projectId'});
+
+    var message = 'custom promise rejection message';
+    var promiseRejectionEvent = {reason: new TypeError(message)};
+
+    window.onunhandledrejection(promiseRejectionEvent);
+
+    setTimeout(function(){
+      expect(originalOnUnhandledRejectionCalled).to.be.true;
+      done();
+    }, WAIT_FOR_STACKTRACE_FROMERROR);
+  });
 });
 
 describe('Setting user', function() {
