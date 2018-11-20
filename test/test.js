@@ -16,7 +16,7 @@
 var expect = chai.expect;
 
 var errorHandler;
-var xhr, requests;
+var xhr, requests, requestHandler;
 var WAIT_FOR_STACKTRACE_FROMERROR = 15;
 
 /** 
@@ -49,13 +49,16 @@ beforeEach(function() {
   });
 
   requests = [];
+  requestHandler = function (req) {
+    req.respond(200, {"Content-Type": "application/json"}, '{}');
+  }
   xhr.onCreate = function (req) {
     // Allow `onCreate` to complete so `xhr` can finish instantiating.
     setTimeout(function(){
       if(req.url.match('clouderrorreporting')) {
         requests.push(req);
       }
-      req.respond(200, {"Content-Type": "application/json"}, '{}');
+      requestHandler(req);
     }, 1);
   };
 });
@@ -167,6 +170,33 @@ describe('Reporting errors', function () {
           expectRequestWithMessage('<anonymous>');
         });
       }
+    });
+
+    describe('XHR error handling', function() {
+      it('should handle network error', function () {
+        requestHandler = function (req) {
+          req.error();
+        };
+        var message = 'News that will fail to send';
+        return errorHandler.report(message).then(function() {
+          throw new Error('unexpected fulfilled report');
+        }, function(e) {
+          expectRequestWithMessage(message);
+          // TODO: Expose a tidied up error object
+          expect(e.target.status).to.equal(0);
+        });
+      });
+
+      it('should handle http error', function () {
+        requestHandler = function (req) {
+          req.respond(503, {"Content-Type": "text/plain"}, '');
+        };
+        errorHandler.start({key:'key', projectId:'projectId'});
+        var message = 'News that was rejected on send';
+        return errorHandler.report(message).then(function() {
+          expectRequestWithMessage(message);
+        });
+      });
     });
   });
 
