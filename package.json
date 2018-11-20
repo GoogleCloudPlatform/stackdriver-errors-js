@@ -1,6 +1,6 @@
 {
   "name": "stackdriver-errors-js",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Experimental client-side JavaScript library to report errors to Stackdriver Error Reporting",
   "main": "stackdriver-errors.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "web"
   ],
   "author": "steren@google.com",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "Apache-2.0",
   "devDependencies": {
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
