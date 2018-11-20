@@ -42,7 +42,7 @@ gulp.task('test', function () {
 
 gulp.task('dist', function() {
   return gulp.src(dependencies.concat(SRC_FILE))
-    .pipe(sourcemaps.init())
+    .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(concat(SRC_FILE.replace('.js', '-concat.js')))
     // This will output the non-minified version
     .pipe(gulp.dest(DEST))
