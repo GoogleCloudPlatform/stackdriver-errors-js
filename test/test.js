@@ -109,12 +109,11 @@ describe('Initialization', function () {
 
 describe('Disabling', function () {
 
- it('should not report errors if disabled', function (done) {
+ it('should not report errors if disabled', function () {
    errorHandler.start({key:'key', projectId:'projectId', disabled: true});
-    errorHandler.report('do not report', function() {
-      expect(requests.length).to.equal(0);
-      done();
-    });
+   return errorHandler.report('do not report').then(function() {
+     expect(requests.length).to.equal(0);
+   });
  });
 
 });
@@ -125,41 +124,38 @@ describe('Reporting errors', function () {
       errorHandler.start({key:'key', projectId:'projectId'});
     });
 
-    it('should report error messages with location', function (done) {
+    it('should report error messages with location', function () {
       var message = 'Something broke!';
-      errorHandler.report(message, function() {
+      return errorHandler.report(message).then(function() {
         expectRequestWithMessage(message);
-        done();
       });
     });
 
-    it('should extract and send stack traces from Errors', function (done) {
+    it('should extract and send stack traces from Errors', function () {
       var message = 'custom message';
       // PhantomJS only attaches a stack to thrown errors
       try {
         throw new TypeError(message);
       } catch(e) {
-        errorHandler.report(e, function() {
+        return errorHandler.report(e).then(function() {
           expectRequestWithMessage(message);
-          done();
         });
       }
     });
 
-    it('should extract and send functionName in stack traces', function (done) {
+    it('should extract and send functionName in stack traces', function () {
       var message = 'custom message';
       // PhantomJS only attaches a stack to thrown errors
       try {
         throwError(message)
       } catch(e) {
-        errorHandler.report(e, function() {
+        return errorHandler.report(e).then(function() {
           expectRequestWithMessage('throwError');
-          done();
         });
       }
     });
 
-    it('should set in stack traces when frame is anonymous', function (done) {
+    it('should set in stack traces when frame is anonymous', function () {
       var message = 'custom message';
       // PhantomJS only attaches a stack to thrown errors
       try {
@@ -167,25 +163,22 @@ describe('Reporting errors', function () {
           throw new TypeError(message);
         })()
       } catch(e) {
-        errorHandler.report(e, function() {
+        return errorHandler.report(e).then(function() {
           expectRequestWithMessage('<anonymous>');
-          done();
         });
       }
     });
   });
 
   describe('Custom target url configuration', function() {
-    it('should report error messages with custom url config', function (done) {
+    it('should report error messages with custom url config', function () {
       var targetUrl = 'config-uri-clouderrorreporting';
       errorHandler.start({targetUrl:targetUrl});
 
       var message = 'Something broke!';
-      errorHandler.report(message, function() {
+      return errorHandler.report(message).then(function() {
         expectRequestWithMessage(message);
         expect(requests[0].url).to.equal(targetUrl);
-
-        done();
       });
     });
   });
