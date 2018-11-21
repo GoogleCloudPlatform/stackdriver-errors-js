@@ -64,24 +64,25 @@
     this.disabled = config.disabled || false;
 
     // Register as global error handler if requested
+    var noop = function() {};
     var that = this;
     if(this.reportUncaughtExceptions) {
-      var oldErrorHandler = window.onerror || function(){};
+      var oldErrorHandler = window.onerror || noop;
 
       window.onerror = function(message, source, lineno, colno, error) {
         if(error){
-          that.report(error);
+          that.report(error).catch(noop);
         }
         oldErrorHandler(message, source, lineno, colno, error);
         return true;
       };
     }
     if(this.reportUnhandledPromiseRejections) {
-      var oldPromiseRejectionHandler = window.onunhandledrejection || function(){};
+      var oldPromiseRejectionHandler = window.onunhandledrejection || noop;
 
       window.onunhandledrejection = function(promiseRejectionEvent) {
         if(promiseRejectionEvent){
-          that.report(promiseRejectionEvent.reason);
+          that.report(promiseRejectionEvent.reason).catch(noop);
         }
         oldPromiseRejectionHandler(promiseRejectionEvent.reason);
         return true;
@@ -92,14 +93,14 @@
   /**
    * Report an error to the Stackdriver Error Reporting API
    * @param {Error|String} err - The Error object or message string to report.
-   * @param callback - Calback function to be called once error has been reported.
+   * @returns {Promise} A promise that completes when the report has been sent.
    */
-  StackdriverErrorReporter.prototype.report = function(err, callback) {
+  StackdriverErrorReporter.prototype.report = function(err) {
     if(this.disabled) {
-      return typeof callback === 'function' && callback();
+      return Promise.resolve(null);
     }
     if(!err) {
-      return typeof callback === 'function' && callback('no error to report');
+      return Promise.reject(new Error('no error to report'));
     }
 
     var payload = {};
@@ -123,7 +124,7 @@
     }
     var that = this;
     // This will use sourcemaps and normalize the stack frames
-    StackTrace.fromError(err).then(function(stack){
+    return StackTrace.fromError(err).then(function(stack){
       payload.message = err.toString();
       for(var s = firstFrameIndex; s < stack.length; s++) {
         payload.message += '\n';
@@ -133,7 +134,7 @@
         // If functionName or methodName isn't available <anonymous> will be used as the name.
         payload.message += ['    at ', stack[s].getFunctionName() || '<anonymous>', ' (', stack[s].getFileName(), ':', stack[s].getLineNumber() ,':', stack[s].getColumnNumber() , ')'].join('');
       }
-      that.sendErrorPayload(payload, callback);
+      return that.sendErrorPayload(payload);
     }, function(reason) {
       // Failure to extract stacktrace
       payload.message = [
@@ -141,24 +142,23 @@
         err.toString(), '\n',
         '    (', err.file, ':', err.line, ':', err.column, ')',
       ].join('');
-      that.sendErrorPayload(payload, callback);
+      return that.sendErrorPayload(payload);
     });
   };
 
-  StackdriverErrorReporter.prototype.sendErrorPayload = function(payload, callback) {
+  StackdriverErrorReporter.prototype.sendErrorPayload = function(payload) {
     var defaultUrl = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
     var url = this.targetUrl || defaultUrl;
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    xhr.onloadend = function() {
-      return typeof callback === 'function' && callback();
-    };
-    xhr.onerror = function(e) {
-      return typeof callback === 'function' && callback(e);
-    };
-    xhr.send(JSON.stringify(payload));
+
+    return new Promise(function(resolve, reject) {
+      xhr.onloadend = resolve;
+      xhr.onerror = reject;
+      xhr.send(JSON.stringify(payload));
+    });
   };
 
   /**
