@@ -8,7 +8,7 @@
     "dist": "gulp dist",
     "prepare": "npm run dist",
     "lint": "gulp lint",
-    "start": "gulp min-demo"
+    "start": "gulp demo"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "gulp-jshint": "^2.1.0",
     "gulp-mocha-phantomjs": "^0.12.2",
     "gulp-rename": "^1.4.0",
+    "gulp-replace": "^1.0.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.1",
     "jshint": "^2.9.6",

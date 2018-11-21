@@ -15,6 +15,7 @@
  */
 var gulp = require('gulp');
 var rename = require('gulp-rename');
+var replace = require('gulp-replace');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
@@ -53,13 +54,22 @@ gulp.task('dist', function() {
     .pipe(gulp.dest(DEST));
 });
 
-gulp.task('min-demo', function() {
+gulp.task('demo-html', function() {
+  return gulp.src('demo/demo.html')
+    .pipe(replace(/..\/dist\//g, ''))
+    .pipe(replace(/..\/demo\/demo\.js/g, 'demo.min.js'))
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('demo-js', function() {
   return gulp.src('demo/demo.js')
     .pipe(sourcemaps.init())
     .pipe(uglify())
     .pipe(rename({ extname: '.min.js' }))
     .pipe(sourcemaps.write('maps'))
-    .pipe(gulp.dest('demo'));
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('default', ['lint', 'test']);
+gulp.task('demo', ['dist', 'demo-html', 'demo-js']);

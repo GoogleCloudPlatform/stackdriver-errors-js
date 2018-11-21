@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.teal-red.min.css" />
   <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-
-  <script src="../node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js"></script>
-  <script src="../stackdriver-errors.js"></script>
 </head>
 
 <body>
@@ -71,8 +69,8 @@
     </main>
   </div>
 
-
-<!--   <script src="demo.js"></script> -->
-  <script src="demo.min.js"></script>
+  <!-- scripts for stackdriver and demo application -->
+  <script src="../dist/stackdriver-errors-concat.min.js"></script>
+  <script src="../demo/demo.js"></script>
 </body>
 </html>
