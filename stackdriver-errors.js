@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(exports) {
+(function(base, factory) {
   'use strict';
 
+  // Doing the UMD dance
+  /* eslint-disable no-undef */
+  if (typeof define === 'function' && define.amd) {
+    define('stackdriver-errors-js', ['stacktrace-js'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('stacktrace-js'));
+  } else {
+    base.StackdriverErrorReporter = factory(base.StackTrace);
+  }
+  /* eslint-enable no-undef */
+}(this, function(StackTrace) {
   /**
    * URL endpoint of the Stackdriver Error Reporting report API.
    */
@@ -25,7 +36,6 @@
    * An Error handler that sends errors to the Stackdriver Error Reporting API.
    */
   var StackdriverErrorReporter = function() {};
-  exports.StackdriverErrorReporter = StackdriverErrorReporter;
 
   /**
    * Initialize the StackdriverErrorReporter object.
@@ -45,10 +55,6 @@
     }
     if (!config.projectId && !config.targetUrl) {
       throw new Error('Cannot initialize: No project ID or target url provided.');
-    }
-    if (typeof StackTrace === 'undefined') {
-      // Inform about missing dependency
-      throw new Error('make sure you loaded “dist/stackdriver-errors-concat.js” or “dist/stackdriver-errors-concat.min.js”, or that you imported the “stacktrace-js” module');
     }
 
     this.apiKey = config.key;
@@ -188,4 +194,6 @@
   StackdriverErrorReporter.prototype.setUser = function(user) {
     this.context.user = user;
   };
-})(this);
+
+  return StackdriverErrorReporter;
+}));

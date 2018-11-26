@@ -3,10 +3,7 @@
 global.chai = require('chai');
 global.sinon = require('sinon');
 
-global.StackTrace = require('stacktrace-js');
-
-var stackdriverErrors = require('../stackdriver-errors');
-global.StackdriverErrorReporter = stackdriverErrors.StackdriverErrorReporter;
+global.StackdriverErrorReporter = require('../stackdriver-errors');
 
 global.window = window = {
   location: {href: 'http://stackdriver-errors.test/'},
