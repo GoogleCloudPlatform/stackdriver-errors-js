@@ -54,6 +54,7 @@
   "overrides": [{
     "files": ["test/*.js"],
     "env": {
+      "commonjs": true,
       "mocha": true
     },
     "globals": {
