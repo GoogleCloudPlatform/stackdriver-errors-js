@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global require */
 var gulp = require('gulp');
 var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
-var jshint = require('gulp-jshint');
 var concat = require('gulp-concat');
 
 var SRC_FILE = 'stackdriver-errors.js';
@@ -28,12 +28,6 @@ var DEST = 'dist/';
 var dependencies = [
     './node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js',
 ];
-
-gulp.task('lint', function() {
-  return gulp.src(SRC_FILE)
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-});
 
 gulp.task('test', function () {
     return gulp
@@ -71,5 +65,5 @@ gulp.task('demo-js', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['lint', 'test']);
+gulp.task('default', ['test']);
 gulp.task('demo', ['dist', 'demo-html', 'demo-js']);

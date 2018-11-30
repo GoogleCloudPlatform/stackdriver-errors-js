@@ -1,0 +1,45 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 5
+  },
+  "globals" : {
+    "Promise": false
+  },
+  "rules": {
+    "block-scoped-var": "error",
+    "complexity": ["error", 15],
+    "curly": "error",
+    "eqeqeq": ["error", "smart"],
+    "linebreak-style": ["error", "unix"],
+    "quote-props": ["error", "as-needed"],
+    "quotes": ["error", "single"],
+    "semi": "error",
+    "unicode-bom": ["error", "never"]
+  },
+  "overrides": [{
+    "files": ["test/*.js"],
+    "env": {
+      "mocha": true
+    },
+    "globals": {
+      "chai": false,
+      "sinon": false,
+      "StackdriverErrorReporter": false
+    },
+    "plugins": [
+      "mocha"
+    ],
+    "rules": {
+      "mocha/handle-done-callback": "error",
+      "mocha/no-exclusive-tests": "warn",
+      "mocha/no-nested-tests": "error",
+      "mocha/no-return-and-callback": "error"
+    }
+  }]
+}
