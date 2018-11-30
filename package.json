@@ -4,11 +4,11 @@
   "description": "Experimental client-side JavaScript library to report errors to Stackdriver Error Reporting",
   "main": "stackdriver-errors.js",
   "scripts": {
-    "test": "gulp",
     "dist": "gulp dist",
     "lint": "eslint --ignore-path .gitignore .",
     "prepare": "npm run dist",
-    "start": "gulp demo && http-server ./dist -o"
+    "start": "gulp demo && http-server ./dist -o",
+    "test": "npm run lint && mocha -r test/setup.js test/test.js"
   },
   "repository": {
     "type": "git",
@@ -25,13 +25,12 @@
   "author": "steren@google.com",
   "license": "Apache-2.0",
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-plugin-mocha": "^5.2.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-jshint": "^2.1.0",
-    "gulp-mocha-phantomjs": "^0.12.2",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
     "gulp-sourcemaps": "^2.6.4",

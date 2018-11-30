@@ -19,7 +19,6 @@ var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
-var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var concat = require('gulp-concat');
 
 var SRC_FILE = 'stackdriver-errors.js';
@@ -28,12 +27,6 @@ var DEST = 'dist/';
 var dependencies = [
     './node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js',
 ];
-
-gulp.task('test', function () {
-    return gulp
-    .src('test/test.html')
-    .pipe(mochaPhantomJS({reporter: 'spec'}));
-});
 
 gulp.task('dist', function() {
   return gulp.src(dependencies.concat(SRC_FILE))
@@ -65,5 +58,5 @@ gulp.task('demo-js', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['test']);
+gulp.task('default', ['dist']);
 gulp.task('demo', ['dist', 'demo-html', 'demo-js']);
