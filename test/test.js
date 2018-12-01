@@ -19,7 +19,7 @@ var errorHandler;
 var xhr, requests, requestHandler;
 var WAIT_FOR_STACKTRACE_FROMERROR = 15;
 
-/** 
+/**
  * Helper function testing if a given message has been reported
  */
 function expectRequestWithMessage(message) {
@@ -39,7 +39,6 @@ function throwError(message) {
 beforeEach(function() {
   window.onerror= function(){};
   window.onunhandledrejection = function(){};
-
   errorHandler = new StackdriverErrorReporter();
 
   xhr = sinon.useFakeXMLHttpRequest();
@@ -57,8 +56,8 @@ beforeEach(function() {
     setTimeout(function(){
       if(req.url.match('clouderrorreporting')) {
         requests.push(req);
+        requestHandler(req);
       }
-      requestHandler(req);
     }, 1);
   };
 });
@@ -85,13 +84,6 @@ describe('Initialization', function () {
 
  it('should fail if no project ID or custom url', function () {
    expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
- });
-
- it('should fail if StackTrace is undefined', function () {
-   var stackTrace = window.StackTrace;
-   delete window.StackTrace;
-   expect(function() {errorHandler.start({projectId:'projectId', key:'key'});}).to.throw(Error, /stackdriver-errors-concat/);
-   window.StackTrace = stackTrace;
  });
 
  it('should succeed if custom target url provided without API key or project id', function () {
@@ -136,7 +128,7 @@ describe('Reporting errors', function () {
 
     it('should extract and send stack traces from Errors', function () {
       var message = 'custom message';
-      // PhantomJS only attaches a stack to thrown errors
+      // Throw and catch error to attach a stacktrace
       try {
         throw new TypeError(message);
       } catch(e) {
@@ -148,7 +140,7 @@ describe('Reporting errors', function () {
 
     it('should extract and send functionName in stack traces', function () {
       var message = 'custom message';
-      // PhantomJS only attaches a stack to thrown errors
+      // Throw and catch error to attach a stacktrace
       try {
         throwError(message);
       } catch(e) {
@@ -160,7 +152,7 @@ describe('Reporting errors', function () {
 
     it('should set in stack traces when frame is anonymous', function () {
       var message = 'custom message';
-      // PhantomJS only attaches a stack to thrown errors
+      // Throw and catch error to attach a stacktrace
       try {
         (function () {
           throw new TypeError(message);
