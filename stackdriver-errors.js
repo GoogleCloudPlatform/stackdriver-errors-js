@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 (function(exports) {
-  "use strict";
+  'use strict';
 
   /**
    * URL endpoint of the Stackdriver Error Reporting report API.
    */
-  var baseAPIUrl = "https://clouderrorreporting.googleapis.com/v1beta1/projects/";
+  var baseAPIUrl = 'https://clouderrorreporting.googleapis.com/v1beta1/projects/';
 
   /**
    * An Error handler that sends errors to the Stackdriver Error Reporting API.
@@ -124,6 +124,7 @@
     }
     var that = this;
     // This will use sourcemaps and normalize the stack frames
+    // eslint-disable-next-line no-undef
     return StackTrace.fromError(err).then(function(stack){
       payload.message = err.toString();
       for(var s = firstFrameIndex; s < stack.length; s++) {
@@ -147,7 +148,7 @@
   };
 
   StackdriverErrorReporter.prototype.sendErrorPayload = function(payload) {
-    var defaultUrl = baseAPIUrl + this.projectId + "/events:report?key=" + this.apiKey;
+    var defaultUrl = baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey;
     var url = this.targetUrl || defaultUrl;
 
     var xhr = new XMLHttpRequest();

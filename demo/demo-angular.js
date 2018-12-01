@@ -1,4 +1,4 @@
-angular.module('demoApp', [])
+angular.module('demoApp', []) // eslint-disable-line no-undef
 
   .factory('$exceptionHandler', ['$log', '$window', function($log, $window) {
     var StackdriverErrors = new $window.StackdriverErrorReporter();

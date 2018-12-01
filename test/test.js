@@ -50,8 +50,8 @@ beforeEach(function() {
 
   requests = [];
   requestHandler = function (req) {
-    req.respond(200, {"Content-Type": "application/json"}, '{}');
-  }
+    req.respond(200, {'Content-Type': 'application/json'}, '{}');
+  };
   xhr.onCreate = function (req) {
     // Allow `onCreate` to complete so `xhr` can finish instantiating.
     setTimeout(function(){
@@ -150,7 +150,7 @@ describe('Reporting errors', function () {
       var message = 'custom message';
       // PhantomJS only attaches a stack to thrown errors
       try {
-        throwError(message)
+        throwError(message);
       } catch(e) {
         return errorHandler.report(e).then(function() {
           expectRequestWithMessage('throwError');
@@ -164,7 +164,7 @@ describe('Reporting errors', function () {
       try {
         (function () {
           throw new TypeError(message);
-        })()
+        })();
       } catch(e) {
         return errorHandler.report(e).then(function() {
           expectRequestWithMessage('<anonymous>');
@@ -189,7 +189,7 @@ describe('Reporting errors', function () {
 
       it('should handle http error', function () {
         requestHandler = function (req) {
-          req.respond(503, {"Content-Type": "text/plain"}, '');
+          req.respond(503, {'Content-Type': 'text/plain'}, '');
         };
         errorHandler.start({key:'key', projectId:'projectId'});
         var message = 'News that was rejected on send';

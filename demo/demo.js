@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// eslint-disable-next-line no-undef
 var StackdriverErrors = new StackdriverErrorReporter();
 
 function updateConfig() {
@@ -39,6 +40,7 @@ function loadFromLocalStorage() {
   if(key && projectId) {
     updateConfig();
   } else {
+    // eslint-disable-next-line no-console
     console.warn('No API key provided, Stackdriver not started.');
   }
 }
@@ -47,7 +49,7 @@ loadFromLocalStorage();
 
 // Fake application code
 var users;
-function vanillaCrash() {
+function vanillaCrash() { // eslint-disable-line no-unused-vars
   starUsers();
 }
 function starUsers() {
@@ -61,16 +63,16 @@ function displayUserInfo() {
   }
 }
 function addUser(name) {
-  var user = new User();
+  var user = new User(name); // eslint-disable-line no-undef
   users.push(user);
 }
 
 
 // Buttons logic
-function reportErrorMessage() {
+function reportErrorMessage() { // eslint-disable-line no-unused-vars
   displayUserInfo();
 }
-function catchCrashAndReport() {
+function catchCrashAndReport() { // eslint-disable-line no-unused-vars
   try {
     addUser('Keyser Söze');
   } catch (e) {
