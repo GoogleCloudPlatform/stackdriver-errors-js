@@ -241,21 +241,4 @@ import errorHandler from './errorHandlerUtility';
 
 **Q: Are private source maps supported?** A: No, see [#4](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/issues/4)
 
-## Developing the library
-
-Install developer dependencies with `npm install --dev`
-
-* Run `npm test` or `yarn run test` to test your changes.
-* Run `npm run dist` or `yarn run dist` generates the minified version.
-
-Start a web server at the root of this repo and open `demo/demo.html` to test reporting errors from the local library with your API key and project ID.
-
-
-## Creating a new release
-
-* find and replace the version number package.json and commit
-* create a new git tag: `git tag v0.0.x`
-* push tag `git push --tags`
-* Create a [GitHub Release](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/releases)
-* update on npm: `npm publish`
-* update the README to use this new published version in setup instructions and commit
+**Q: Can I propose changes to the library?** A: Yes, see [the Contributing documentation](CONTRIBUTING.md) for more details.
