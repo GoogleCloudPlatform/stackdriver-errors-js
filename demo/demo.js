@@ -27,7 +27,7 @@ function updateConfig() {
     key: key,
     projectId: projectId,
     service: 'webapp',
-    version: 'demo'
+    version: 'demo',
   });
 }
 
@@ -37,7 +37,7 @@ function loadFromLocalStorage() {
   document.getElementById('input-apikey').value = key;
   document.getElementById('input-projectid').value = projectId;
 
-  if(key && projectId) {
+  if (key && projectId) {
     updateConfig();
   } else {
     // eslint-disable-next-line no-console
@@ -53,12 +53,12 @@ function vanillaCrash() { // eslint-disable-line no-unused-vars
   starUsers();
 }
 function starUsers() {
-  for(var i = 0; i < users.length; i++) {
+  for (var i = 0; i < users.length; i++) {
     users.starred = true;
   }
 }
 function displayUserInfo() {
-  if(!users) {
+  if (!users) {
     StackdriverErrors.report('No user information to display');
   }
 }

@@ -25,18 +25,18 @@ var SRC_FILE = 'stackdriver-errors.js';
 var DEST = 'dist/';
 
 var dependencies = [
-    './node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js',
+  './node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js',
 ];
 
 gulp.task('dist', function() {
   return gulp.src(dependencies.concat(SRC_FILE))
-    .pipe(sourcemaps.init({ loadMaps: true }))
+    .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(concat(SRC_FILE.replace('.js', '-concat.js')))
     // This will output the non-minified version
     .pipe(gulp.dest(DEST))
     // This will minify and rename to stackdriver-errors.min.js
     .pipe(uglify())
-    .pipe(rename({ extname: '.min.js' }))
+    .pipe(rename({extname: '.min.js'}))
     .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest(DEST));
 });
@@ -53,7 +53,7 @@ gulp.task('demo-js', function() {
   return gulp.src('demo/demo.js')
     .pipe(sourcemaps.init())
     .pipe(uglify())
-    .pipe(rename({ extname: '.min.js' }))
+    .pipe(rename({extname: '.min.js'}))
     .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest('dist'));
 });

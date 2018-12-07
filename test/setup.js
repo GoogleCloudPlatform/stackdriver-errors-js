@@ -9,7 +9,7 @@ var stackdriverErrors = require('../stackdriver-errors');
 global.StackdriverErrorReporter = stackdriverErrors.StackdriverErrorReporter;
 
 global.window = window = {
-  location: { href: 'http://stackdriver-errors.test/' },
-  navigator: { userAgent: 'FakeAgent' },
+  location: {href: 'http://stackdriver-errors.test/'},
+  navigator: {userAgent: 'FakeAgent'},
 };
 global.XMLHttpRequest = sinon.FakeXMLHttpRequest;
