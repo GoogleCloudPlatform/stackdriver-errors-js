@@ -79,7 +79,7 @@ window.addEventListener('DOMContentLoaded', function() {
     version: '<my-service-version>',            // (optional)
     // reportUncaughtExceptions: false          // (optional) Set to false to stop reporting unhandled exceptions.
     // reportUnhandledPromiseRejections: false  // (optional) Set to false to stop reporting unhandled promise rejections.
-    // disabled: true                           // (optional) Set to true to not report errors when calling report(), this can be used when developping locally.
+    // disabled: true                           // (optional) Set to true to not report errors when calling report(), this can be used when developing locally.
     // context: {user: 'user1'}                 // (optional) You can set the user later using setUser()
   });
 });
@@ -228,9 +228,24 @@ Consumption of the errorHandlerUtility would essentially follow the following pa
 // MyComponent.jsx
 import errorHandler from './errorHandlerUtility';
 
-// Some example code that throws an error
-.catch(error) {
+try {
+  someFunctionThatThrows();
+} catch (error) {
   errorHandler.report(error);
+}
+
+```
+
+If the call to report has additional levels of wrapping code, extra
+frames can be trimmed from the top of generated stacks by using a
+number greater than one for the `skipLocalFrames` option:
+
+```javascript
+import errorHandler from './errorHandlerUtility';
+
+function backendReport (string) {
+  // Skipping the two frames, for report() and for backendReport()
+  errorHandler.report(error, {skipLocalFrames: 2});
 }
 
 ```

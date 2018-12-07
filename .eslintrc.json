@@ -46,7 +46,10 @@
     }],
     "spaced-comment": ["error", "always"],
     "switch-colon-spacing": "error",
-    "unicode-bom": ["error", "never"]
+    "unicode-bom": ["error", "never"],
+    "valid-jsdoc": ["error", {
+      "requireReturn": false
+    }]
   },
   "overrides": [{
     "files": ["test/*.js"],
