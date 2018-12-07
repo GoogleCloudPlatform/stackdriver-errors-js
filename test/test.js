@@ -37,24 +37,24 @@ function throwError(message) {
 }
 
 beforeEach(function() {
-  window.onerror= function(){};
-  window.onunhandledrejection = function(){};
+  window.onerror= function() {};
+  window.onunhandledrejection = function() {};
   errorHandler = new StackdriverErrorReporter();
 
   xhr = sinon.useFakeXMLHttpRequest();
   xhr.useFilters = true;
-  xhr.addFilter(function (method, url) {
-      return !url.match('clouderrorreporting');
+  xhr.addFilter(function(method, url) {
+    return !url.match('clouderrorreporting');
   });
 
   requests = [];
-  requestHandler = function (req) {
+  requestHandler = function(req) {
     req.respond(200, {'Content-Type': 'application/json'}, '{}');
   };
-  xhr.onCreate = function (req) {
+  xhr.onCreate = function(req) {
     // Allow `onCreate` to complete so `xhr` can finish instantiating.
-    setTimeout(function(){
-      if(req.url.match('clouderrorreporting')) {
+    setTimeout(function() {
+      if (req.url.match('clouderrorreporting')) {
         requests.push(req);
         requestHandler(req);
       }
@@ -62,102 +62,105 @@ beforeEach(function() {
   };
 });
 
-describe('Initialization', function () {
- it('should have default service', function () {
-   errorHandler.start({key:'key', projectId:'projectId'});
-   expect(errorHandler.serviceContext.service).to.equal('web');
- });
+describe('Initialization', function() {
+  it('should have default service', function() {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
+    expect(errorHandler.serviceContext.service).to.equal('web');
+  });
 
- it('should by default report uncaught exceptions', function () {
-   errorHandler.start({key:'key', projectId:'projectId'});
-   expect(errorHandler.reportUncaughtExceptions).to.equal(true);
- });
+  it('should by default report uncaught exceptions', function() {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
+    expect(errorHandler.reportUncaughtExceptions).to.equal(true);
+  });
 
- it('should by default report unhandled promise rejections', function () {
-   errorHandler.start({key:'key', projectId:'projectId'});
-   expect(errorHandler.reportUnhandledPromiseRejections).to.equal(true);
- });
+  it('should by default report unhandled promise rejections', function() {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
+    expect(errorHandler.reportUnhandledPromiseRejections).to.equal(true);
+  });
 
- it('should fail if no API key or custom url', function () {
-   expect(function() {errorHandler.start({projectId:'projectId'});}).to.throw(Error, /API/);
- });
+  it('should fail if no API key or custom url', function() {
+    expect(function() {
+      errorHandler.start({projectId: 'projectId'});
+    }).to.throw(Error, /API/);
+  });
 
- it('should fail if no project ID or custom url', function () {
-   expect(function() {errorHandler.start({key:'key'});}).to.throw(Error, /project/);
- });
+  it('should fail if no project ID or custom url', function() {
+    expect(function() {
+      errorHandler.start({key: 'key'});
+    }).to.throw(Error, /project/);
+  });
 
- it('should succeed if custom target url provided without API key or project id', function () {
-   expect(function() {errorHandler.start({targetUrl:'custom-url'});}).to.not.throw();
- });
+  it('should succeed if custom target url provided without API key or project id', function() {
+    expect(function() {
+      errorHandler.start({targetUrl: 'custom-url'});
+    }).to.not.throw();
+  });
 
- it('should have default context', function () {
-   errorHandler.start({key:'key', projectId:'projectId'});
-   expect(errorHandler.context).to.eql({});
- });
+  it('should have default context', function() {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
+    expect(errorHandler.context).to.eql({});
+  });
 
- it('should allow to specify a default context', function () {
-   errorHandler.start({context: { user: '1234567890' }, key:'key', projectId:'projectId'});
-   expect(errorHandler.context).to.eql({ user: '1234567890' });
- });
-
+  it('should allow to specify a default context', function() {
+    errorHandler.start({context: {user: '1234567890'}, key: 'key', projectId: 'projectId'});
+    expect(errorHandler.context).to.eql({user: '1234567890'});
+  });
 });
 
-describe('Disabling', function () {
-
- it('should not report errors if disabled', function () {
-   errorHandler.start({key:'key', projectId:'projectId', disabled: true});
-   return errorHandler.report('do not report').then(function() {
-     expect(requests.length).to.equal(0);
-   });
- });
-
+describe('Disabling', function() {
+  it('should not report errors if disabled', function() {
+    errorHandler.start({key: 'key', projectId: 'projectId', disabled: true});
+    return errorHandler.report('do not report').then(function() {
+      expect(requests.length).to.equal(0);
+    });
+  });
 });
 
-describe('Reporting errors', function () {
+describe('Reporting errors', function() {
   describe('Default configuration', function() {
     beforeEach(function() {
-      errorHandler.start({key:'key', projectId:'projectId'});
+      errorHandler.start({key: 'key', projectId: 'projectId'});
     });
 
-    it('should report error messages with location', function () {
+    it('should report error messages with location', function() {
       var message = 'Something broke!';
       return errorHandler.report(message).then(function() {
         expectRequestWithMessage(message);
       });
     });
 
-    it('should extract and send stack traces from Errors', function () {
+    it('should extract and send stack traces from Errors', function() {
       var message = 'custom message';
       // Throw and catch error to attach a stacktrace
       try {
         throw new TypeError(message);
-      } catch(e) {
+      } catch (e) {
         return errorHandler.report(e).then(function() {
           expectRequestWithMessage(message);
         });
       }
     });
 
-    it('should extract and send functionName in stack traces', function () {
+    it('should extract and send functionName in stack traces', function() {
       var message = 'custom message';
       // Throw and catch error to attach a stacktrace
       try {
         throwError(message);
-      } catch(e) {
+      } catch (e) {
         return errorHandler.report(e).then(function() {
           expectRequestWithMessage('throwError');
         });
       }
     });
 
-    it('should set in stack traces when frame is anonymous', function () {
+    it('should set in stack traces when frame is anonymous', function() {
       var message = 'custom message';
       // Throw and catch error to attach a stacktrace
       try {
-        (function () {
+        (function() {
           throw new TypeError(message);
         })();
-      } catch(e) {
+      } catch (e) {
         return errorHandler.report(e).then(function() {
           expectRequestWithMessage('<anonymous>');
         });
@@ -165,8 +168,8 @@ describe('Reporting errors', function () {
     });
 
     describe('XHR error handling', function() {
-      it('should handle network error', function () {
-        requestHandler = function (req) {
+      it('should handle network error', function() {
+        requestHandler = function(req) {
           req.error();
         };
         var message = 'News that will fail to send';
@@ -179,11 +182,11 @@ describe('Reporting errors', function () {
         });
       });
 
-      it('should handle http error', function () {
-        requestHandler = function (req) {
+      it('should handle http error', function() {
+        requestHandler = function(req) {
           req.respond(503, {'Content-Type': 'text/plain'}, '');
         };
-        errorHandler.start({key:'key', projectId:'projectId'});
+        errorHandler.start({key: 'key', projectId: 'projectId'});
         var message = 'News that was rejected on send';
         return errorHandler.report(message).then(function() {
           expectRequestWithMessage(message);
@@ -193,9 +196,9 @@ describe('Reporting errors', function () {
   });
 
   describe('Custom target url configuration', function() {
-    it('should report error messages with custom url config', function () {
+    it('should report error messages with custom url config', function() {
       var targetUrl = 'config-uri-clouderrorreporting';
-      errorHandler.start({targetUrl:targetUrl});
+      errorHandler.start({targetUrl: targetUrl});
 
       var message = 'Something broke!';
       return errorHandler.report(message).then(function() {
@@ -206,37 +209,38 @@ describe('Reporting errors', function () {
   });
 });
 
-describe('Unhandled exceptions', function () {
-
-  it('should be reported by default', function (done) {
-    errorHandler.start({key:'key', projectId:'projectId'});
+describe('Unhandled exceptions', function() {
+  it('should be reported by default', function(done) {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
 
     var message = 'custom message';
     try {
       throw new TypeError(message);
-    } catch(e) {
+    } catch (e) {
       window.onerror(message, 'test.js', 42, 42, e);
 
-      setTimeout(function(){
+      setTimeout(function() {
         expectRequestWithMessage(message);
         done();
       }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 
-  it('should keep calling previous error handler if already present', function (done) {
+  it('should keep calling previous error handler if already present', function(done) {
     var originalOnErrorCalled = false;
-    window.onerror = function(){ originalOnErrorCalled = true;};
+    window.onerror = function() {
+      originalOnErrorCalled = true;
+    };
 
-    errorHandler.start({key:'key', projectId:'projectId'});
+    errorHandler.start({key: 'key', projectId: 'projectId'});
 
     var message = 'custom message';
     try {
       throw new TypeError(message);
-    } catch(e) {
+    } catch (e) {
       window.onerror(message, 'test.js', 42, 42, e);
 
-      setTimeout(function(){
+      setTimeout(function() {
         expect(originalOnErrorCalled).to.be.true;
         done();
       }, WAIT_FOR_STACKTRACE_FROMERROR);
@@ -244,38 +248,39 @@ describe('Unhandled exceptions', function () {
   });
 });
 
-describe('Unhandled promise rejections', function () {
-
-  it('should be reported by default', function (done) {
-    errorHandler.start({key:'key', projectId:'projectId'});
+describe('Unhandled promise rejections', function() {
+  it('should be reported by default', function(done) {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
 
     var message = 'custom promise rejection message';
     try {
       throwError(message);
-    } catch(e) {
+    } catch (e) {
       var promiseRejectionEvent = {reason: e};
 
       window.onunhandledrejection(promiseRejectionEvent);
 
-      setTimeout(function(){
+      setTimeout(function() {
         expectRequestWithMessage(message);
         done();
       }, WAIT_FOR_STACKTRACE_FROMERROR);
     }
   });
 
-  it('should keep calling previous promise rejection handler if already present', function (done) {
+  it('should keep calling previous promise rejection handler if already present', function(done) {
     var originalOnUnhandledRejectionCalled = false;
-    window.onunhandledrejection = function(){ originalOnUnhandledRejectionCalled = true;};
+    window.onunhandledrejection = function() {
+      originalOnUnhandledRejectionCalled = true;
+    };
 
-    errorHandler.start({key:'key', projectId:'projectId'});
+    errorHandler.start({key: 'key', projectId: 'projectId'});
 
     var message = 'custom promise rejection message';
     var promiseRejectionEvent = {reason: new TypeError(message)};
 
     window.onunhandledrejection(promiseRejectionEvent);
 
-    setTimeout(function(){
+    setTimeout(function() {
       expect(originalOnUnhandledRejectionCalled).to.be.true;
       done();
     }, WAIT_FOR_STACKTRACE_FROMERROR);
@@ -283,8 +288,8 @@ describe('Unhandled promise rejections', function () {
 });
 
 describe('Setting user', function() {
-  it('should set the user in the context', function () {
-    errorHandler.start({key:'key', projectId:'projectId'});
+  it('should set the user in the context', function() {
+    errorHandler.start({key: 'key', projectId: 'projectId'});
     errorHandler.setUser('1234567890');
     expect(errorHandler.context.user).to.equal('1234567890');
     errorHandler.setUser();

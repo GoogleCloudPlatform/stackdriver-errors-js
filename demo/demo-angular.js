@@ -4,7 +4,7 @@ angular.module('demoApp', []) // eslint-disable-line no-undef
     var StackdriverErrors = new $window.StackdriverErrorReporter();
     StackdriverErrors.start({
       projectId: '<your-project-id>',
-      key: '<your-api-key>'
+      key: '<your-api-key>',
     });
 
     return function(exception, cause) {
