@@ -167,6 +167,18 @@ describe('Reporting errors', function() {
       }
     });
 
+    it('should resolve with stacktrace in message', function() {
+      try {
+        throwError('mystery problem');
+      } catch (e) {
+        return errorHandler.report(e).then(function(details) {
+          var expected = ': mystery problem\n    at throwError (';
+          expectRequestWithMessage(expected);
+          expect(details.message).to.contain(expected);
+        });
+      }
+    });
+
     describe('XHR error handling', function() {
       it('should handle network error', function() {
         requestHandler = function(req) {
@@ -175,10 +187,9 @@ describe('Reporting errors', function() {
         var message = 'News that will fail to send';
         return errorHandler.report(message).then(function() {
           throw new Error('unexpected fulfilled report');
-        }, function(e) {
+        }, function(err) {
           expectRequestWithMessage(message);
-          // TODO: Expose a tidied up error object
-          expect(e.target.status).to.equal(0);
+          expect(err.message).to.equal('network error on stackdriver report');
         });
       });
 
@@ -189,7 +200,10 @@ describe('Reporting errors', function() {
         errorHandler.start({key: 'key', projectId: 'projectId'});
         var message = 'News that was rejected on send';
         return errorHandler.report(message).then(function() {
+          throw new Error('unexpected fulfilled report');
+        }, function(err) {
           expectRequestWithMessage(message);
+          expect(err.message).to.equal('503 http response on stackdriver report');
         });
       });
     });

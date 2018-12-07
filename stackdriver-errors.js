@@ -126,23 +126,29 @@
     // This will use sourcemaps and normalize the stack frames
     // eslint-disable-next-line no-undef
     return StackTrace.fromError(err).then(function(stack) {
-      payload.message = err.toString();
+      var lines = [err.toString()];
+      // Reconstruct to a JS stackframe as expected by Error Reporting parsers.
       for (var s = firstFrameIndex; s < stack.length; s++) {
-        payload.message += '\n';
-        // Reconstruct the stackframe to a JS stackframe as expected by Error Reporting parsers.
-        // stack[s].source should not be used because not populated when created from source map.
-        //
-        // If functionName or methodName isn't available <anonymous> will be used as the name.
-        payload.message += ['    at ', stack[s].getFunctionName() || '<anonymous>', ' (', stack[s].getFileName(), ':', stack[s].getLineNumber(), ':', stack[s].getColumnNumber(), ')'].join('');
+        // Cannot use stack[s].source as it is not populated from source maps.
+        lines.push([
+          '    at ',
+          // If a function name is not available '<anonymous>' will be used.
+          stack[s].getFunctionName() || '<anonymous>', ' (',
+          stack[s].getFileName(), ':',
+          stack[s].getLineNumber(), ':',
+          stack[s].getColumnNumber(), ')',
+        ].join(''));
       }
-      return that.sendErrorPayload(payload);
+      return lines.join('\n');
     }, function(reason) {
       // Failure to extract stacktrace
-      payload.message = [
+      return [
         'Error extracting stack trace: ', reason, '\n',
         err.toString(), '\n',
         '    (', err.file, ':', err.line, ':', err.column, ')',
       ].join('');
+    }).then(function(message) {
+      payload.message = message;
       return that.sendErrorPayload(payload);
     });
   };
@@ -156,8 +162,17 @@
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 
     return new Promise(function(resolve, reject) {
-      xhr.onloadend = resolve;
-      xhr.onerror = reject;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          var code = xhr.status;
+          if (code >= 200 && code < 300) {
+            resolve({message: payload.message});
+          } else {
+            var condition = code ? code + ' http response'  : 'network error';
+            reject(new Error(condition + ' on stackdriver report'));
+          }
+        }
+      };
       xhr.send(JSON.stringify(payload));
     });
   };
