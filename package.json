@@ -6,9 +6,12 @@
   "scripts": {
     "dist": "gulp dist",
     "lint": "eslint --ignore-path .gitignore .",
+    "prebuild": "npm run test",
     "prepare": "npm run dist",
+    "pretest": "npm run lint",
     "start": "gulp demo && http-server ./dist -o",
-    "test": "npm run lint && mocha -r test/setup.js test/test.js"
+    "test": "mocha -r test/setup.js test/test.js",
+    "version": "sed -i s/@[0-9.]\\\\{5,\\\\}/@${npm_package_version}/g README.md && git add README.md"
   },
   "repository": {
     "type": "git",

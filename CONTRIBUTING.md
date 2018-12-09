@@ -48,12 +48,12 @@ the one above, the [Software Grant and Corporate Contributor License Agreement].
 
 ## Creating a new release
 
-* find and replace the version number package.json and commit
-* create a new git tag: `git tag v0.0.x`
-* push tag `git push --tags`
-* Create a [GitHub Release]
-* update on npm: `npm publish`
-* update the README to use this new published version in setup instructions and commit
+From master branch with all required changes landed and pulled:
+
+* Run `npm version minor -m 'Release %s'` with semver component as needed.
+* Push commit and new tag with `git push --tags`.
+* Create a [GitHub Release].
+* Publish new package to npm registry with `npm publish`.
 
 
 [npm]: https://www.npmjs.com/
