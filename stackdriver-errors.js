@@ -93,15 +93,18 @@
   /**
    * Report an error to the Stackdriver Error Reporting API
    * @param {Error|String} err - The Error object or message string to report.
+   * @param {Object} options - Configuration for this report.
+   * @param {number} [options.skipLocalFrames=1] - Omit number of frames if creating stack.
    * @returns {Promise} A promise that completes when the report has been sent.
    */
-  StackdriverErrorReporter.prototype.report = function(err) {
+  StackdriverErrorReporter.prototype.report = function(err, options) {
     if (this.disabled) {
       return Promise.resolve(null);
     }
     if (!err) {
       return Promise.reject(new Error('no error to report'));
     }
+    options = options || {};
 
     var payload = {};
     payload.serviceContext = this.serviceContext;
@@ -120,7 +123,7 @@
         err = e;
       }
       // the first frame when using report() is always this library
-      firstFrameIndex = 1;
+      firstFrameIndex = options.skipLocalFrames || 1;
     }
     var that = this;
     // This will use sourcemaps and normalize the stack frames

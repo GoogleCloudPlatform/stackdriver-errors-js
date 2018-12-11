@@ -21,6 +21,7 @@ var WAIT_FOR_STACKTRACE_FROMERROR = 15;
 
 /**
  * Helper function testing if a given message has been reported
+ * @param {string} [message] - Substring that message must contain.
  */
 function expectRequestWithMessage(message) {
   expect(requests.length).to.equal(1);
@@ -31,6 +32,7 @@ function expectRequestWithMessage(message) {
 
 /**
  * Helper for testing call stack reporting
+ * @param {string} [message] - Contents of error to throw.
  */
 function throwError(message) {
   throw new TypeError(message);
@@ -126,6 +128,26 @@ describe('Reporting errors', function() {
       var message = 'Something broke!';
       return errorHandler.report(message).then(function() {
         expectRequestWithMessage(message);
+      });
+    });
+
+    it('should include report origin by default', function() {
+      var helper = function helperFn(handler) {
+        return handler.report('common message');
+      };
+      return helper(errorHandler).then(function() {
+        expectRequestWithMessage(': common message\n    at helperFn (');
+      });
+    });
+
+    it('should skip number of frames if option is given', function() {
+      var helper = function outerFn(handler) {
+        return (function innerFn() {
+          return handler.report('common message', {skipLocalFrames: 2});
+        })();
+      };
+      return helper(errorHandler).then(function() {
+        expectRequestWithMessage(': common message\n    at outerFn (');
       });
     });
 
