@@ -59,7 +59,7 @@
     },
     "globals": {
       "chai": false,
-      "sinon": false,
+      "nise": false,
       "StackdriverErrorReporter": false
     },
     "plugins": [

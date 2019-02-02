@@ -7,7 +7,6 @@
     "clean": "rimraf dist/",
     "dist": "gulp lib-concat",
     "lint": "eslint --ignore-path .gitignore .",
-    "prebuild": "npm run test",
     "prepare": "npm run clean && npm run dist",
     "pretest": "npm run lint",
     "start": "gulp demo && http-server ./dist -o",
@@ -32,11 +31,11 @@
   "author": "steren@google.com",
   "license": "Apache-2.0",
   "devDependencies": {
-    "browser-pack-flat": "^3.2.0",
+    "browser-pack-flat": "^3.3.0",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
-    "eslint": "^5.9.0",
-    "eslint-plugin-mocha": "^5.2.0",
+    "eslint": "^5.13.0",
+    "eslint-plugin-mocha": "^5.2.1",
     "gulp": "^3.9.1",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
@@ -44,13 +43,13 @@
     "gulp-uglify": "^3.0.1",
     "http-server": "^0.11.1",
     "mocha": "^5.2.0",
-    "rimraf": "^2.6.2",
-    "sinon": "^7.1.1",
+    "nise": "^1.4.8",
+    "rimraf": "^2.6.3",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "core-js": "^2.5.7",
+    "core-js": "^2.6.3",
     "stacktrace-js": "^2.0.0"
   }
 }
