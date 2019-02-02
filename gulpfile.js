@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global require */
 var browserify = require('browserify');
 var gulp = require('gulp');
 var rename = require('gulp-rename');

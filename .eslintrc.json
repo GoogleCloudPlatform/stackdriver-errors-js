@@ -1,6 +1,7 @@
 {
   "env": {
-    "browser": true
+    "browser": true,
+    "commonjs": true
   },
   "extends": [
     "eslint:recommended"
@@ -54,7 +55,6 @@
   "overrides": [{
     "files": ["test/*.js"],
     "env": {
-      "commonjs": true,
       "mocha": true
     },
     "globals": {
