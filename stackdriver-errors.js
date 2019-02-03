@@ -120,9 +120,19 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
     // the first frame when using report() is always this library
     firstFrameIndex = options.skipLocalFrames || 1;
   }
-  var that = this;
+
+  var reportUrl = this.targetUrl || (
+    baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey);
+
+  return resolveError(err, firstFrameIndex)
+    .then(function(message) {
+      payload.message = message;
+      return sendErrorPayload(reportUrl, payload);
+    });
+};
+
+function resolveError(err, firstFrameIndex) {
   // This will use sourcemaps and normalize the stack frames
-  // eslint-disable-next-line no-undef
   return StackTrace.fromError(err).then(function(stack) {
     var lines = [err.toString()];
     // Reconstruct to a JS stackframe as expected by Error Reporting parsers.
@@ -145,16 +155,10 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
       err.toString(), '\n',
       '    (', err.file, ':', err.line, ':', err.column, ')',
     ].join('');
-  }).then(function(message) {
-    payload.message = message;
-    return that.sendErrorPayload(payload);
   });
-};
+}
 
-StackdriverErrorReporter.prototype.sendErrorPayload = function(payload) {
-  var defaultUrl = baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey;
-  var url = this.targetUrl || defaultUrl;
-
+function sendErrorPayload(url, payload) {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', url, true);
   xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -173,7 +177,7 @@ StackdriverErrorReporter.prototype.sendErrorPayload = function(payload) {
     };
     xhr.send(JSON.stringify(payload));
   });
-};
+}
 
 /**
  * Set the user for the current context.
