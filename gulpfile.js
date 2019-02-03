@@ -13,25 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global require */
+var browserify = require('browserify');
 var gulp = require('gulp');
 var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
-var concat = require('gulp-concat');
+var buffer = require('vinyl-buffer');
+var source = require('vinyl-source-stream');
 
 var SRC_FILE = 'stackdriver-errors.js';
 var DEST = 'dist/';
 
-var dependencies = [
-  './node_modules/stacktrace-js/dist/stacktrace-with-promises-and-json-polyfills.js',
+var polyfills = [
+  'core-js/fn/array/filter',
+  'core-js/fn/array/for-each',
+  'core-js/fn/array/map',
+  'core-js/fn/function/bind',
+  'core-js/fn/promise',
 ];
 
-gulp.task('dist', function() {
-  return gulp.src(dependencies.concat(SRC_FILE))
+gulp.task('lib-concat', function() {
+  return browserify({
+    debug: true,
+    entries: SRC_FILE,
+    standalone: 'StackdriverErrorReporter',
+  })
+    .require(polyfills)
+    .plugin('browser-pack-flat/plugin')
+    .bundle()
+    .pipe(source(SRC_FILE))
+    .pipe(rename({suffix: '-concat'}))
+    .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(concat(SRC_FILE.replace('.js', '-concat.js')))
     // This will output the non-minified version
     .pipe(gulp.dest(DEST))
     // This will minify and rename to stackdriver-errors.min.js
@@ -58,5 +72,5 @@ gulp.task('demo-js', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['dist']);
-gulp.task('demo', ['dist', 'demo-html', 'demo-js']);
+gulp.task('default', ['lib-concat']);
+gulp.task('demo', ['lib-concat', 'demo-html', 'demo-js']);

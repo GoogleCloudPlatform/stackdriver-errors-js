@@ -1,15 +1,11 @@
 // Setup for tests to run outside of a browser environment
-/* eslint-disable no-global-assign,no-undef */
 global.chai = require('chai');
-global.sinon = require('sinon');
+global.nise = require('nise');
 
-global.StackTrace = require('stacktrace-js');
+global.StackdriverErrorReporter = require('../stackdriver-errors');
 
-var stackdriverErrors = require('../stackdriver-errors');
-global.StackdriverErrorReporter = stackdriverErrors.StackdriverErrorReporter;
-
-global.window = window = {
+global.window = {
   location: {href: 'http://stackdriver-errors.test/'},
   navigator: {userAgent: 'FakeAgent'},
 };
-global.XMLHttpRequest = sinon.FakeXMLHttpRequest;
+global.XMLHttpRequest = nise.fakeXhr.FakeXMLHttpRequest;

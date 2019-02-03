@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 var expect = chai.expect;
+var fakeXhr = nise.fakeXhr;
 
 var errorHandler;
 var xhr, requests, requestHandler;
@@ -43,7 +44,7 @@ beforeEach(function() {
   window.onunhandledrejection = function() {};
   errorHandler = new StackdriverErrorReporter();
 
-  xhr = sinon.useFakeXMLHttpRequest();
+  xhr = fakeXhr.useFakeXMLHttpRequest();
   xhr.useFilters = true;
   xhr.addFilter(function(method, url) {
     return !url.match('clouderrorreporting');
