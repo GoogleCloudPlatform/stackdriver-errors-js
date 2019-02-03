@@ -56,34 +56,37 @@ StackdriverErrorReporter.prototype.start = function(config) {
   }
   this.reportUncaughtExceptions = config.reportUncaughtExceptions !== false;
   this.reportUnhandledPromiseRejections = config.reportUnhandledPromiseRejections !== false;
-  this.disabled = config.disabled || false;
+  this.disabled = !!config.disabled;
 
+  registerHandlers(this);
+};
+
+function registerHandlers(reporter) {
   // Register as global error handler if requested
   var noop = function() {};
-  var that = this;
-  if (this.reportUncaughtExceptions) {
+  if (reporter.reportUncaughtExceptions) {
     var oldErrorHandler = window.onerror || noop;
 
     window.onerror = function(message, source, lineno, colno, error) {
       if (error) {
-        that.report(error).catch(noop);
+        reporter.report(error).catch(noop);
       }
       oldErrorHandler(message, source, lineno, colno, error);
       return true;
     };
   }
-  if (this.reportUnhandledPromiseRejections) {
+  if (reporter.reportUnhandledPromiseRejections) {
     var oldPromiseRejectionHandler = window.onunhandledrejection || noop;
 
     window.onunhandledrejection = function(promiseRejectionEvent) {
       if (promiseRejectionEvent) {
-        that.report(promiseRejectionEvent.reason).catch(noop);
+        reporter.report(promiseRejectionEvent.reason).catch(noop);
       }
       oldPromiseRejectionHandler(promiseRejectionEvent.reason);
       return true;
     };
   }
-};
+}
 
 /**
  * Report an error to the Stackdriver Error Reporting API
