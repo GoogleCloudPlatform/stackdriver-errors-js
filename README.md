@@ -2,36 +2,37 @@
 
 > **This is not an official Google product.** This module is experimental and may not be ready for use.
 
-[![Build Status](https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js.svg?branch=master)](https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js)
-[![Dependency Status](https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js.svg)](https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js)
+[![Build Status][travis-ci status image]][travis-ci status link]
+[![Dependency Status][david-dm status image]][david-dm status link]
 
-This **experimental** library provides Stackdriver Error Reporting support for client-side web JavaScript applications.
-[Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. For server-side Node.js error reporting, use [this other library](https://github.com/GoogleCloudPlatform/cloud-errors-nodejs).
+This **experimental** library provides Stackdriver Error Reporting support for client-side web JavaScript applications. [Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. For server-side Node.js error reporting, use [cloud-errors-nodejs](https://github.com/GoogleCloudPlatform/cloud-errors-nodejs) instead.
 
 Here's an introductory video:
 
-[![Learn about Error Reporting in Stackdriver](https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg)](https://www.youtube.com/watch?v=cVpWVD75Hs8)
+[![Learn about Error Reporting in Stackdriver][video thumbnail]][video link]
 
 ## Prerequisites
 
 1. You need a [Google Cloud project](https://console.cloud.google.com).
-1. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
-1. Create a browser API key:
 
-  - Follow [these instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
-  - Recommended: Use **Application restrictions** to restrict this key to your website.
-  - Recommended: Use **API restrictions** to limit this key to the *Stackdriver Error Reporting API*.
+2. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
 
-If API keys are not an option for your team, you can [use a custom url](#configuring-without-an-api-key) to send your errors to your backend.
+3. Create a browser API key:
+   - Follow [using api keys instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
+   - Recommended: Use **Application restrictions** to restrict this key to your website.
+   - Recommended: Use **API restrictions** to limit this key to the *Stackdriver Error Reporting API*.
+
+If API keys are not an option for your team, [use a custom url](
+#configuring-without-an-api-key) to send your errors to your backend.
 
 ## Quickstart
 
-**Load and initialize the experimental library**
+The library can either be used as a standalone script, or incorporated as a module into a larger javascript application.
 
-Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and `<my-project-id>` with your API key and Google Cloud project ID string:
+For use in any HTML page or without a specific framework, include the standalone script from CDN and set up the error handler in a page load event. For instance, use include the following HTML in the page `<head>` and replace `<my-api-key>` and `<my-project-id>` with your API key and Google Cloud project ID string:
 
 ```HTML
-<!-- Warning: This is an experimental library, do not use it on production environments -->
+<!-- Warning: Experimental library, do not use in production environments. -->
 <script defer src="https://cdn.jsdelivr.net/npm/stackdriver-errors-js@0.7.0/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 window.addEventListener('DOMContentLoaded', function() {
@@ -39,70 +40,105 @@ window.addEventListener('DOMContentLoaded', function() {
   errorHandler.start({
     key: '<my-api-key>',
     projectId: '<my-project-id>'
+    // Other optional arguments can also be supplied, see below.
   });
 });
 </script>
 ```
 And that's all you need to do! Unhandled exceptions will now automatically be reported to your project.
 
-**Test your setup**
+### Test your setup
 
-Open the page that you instrumented, open the Devtools console and enter the following to trigger an unhandled exception:
+Open the page that you instrumented, open the Developer Tools console and enter the following to trigger an unhandled exception:
 
-```JS
-(function testErrorReporting() {window.onerror(null, null, null, null, new Error('Test: Something broke!'));})();
+```javascript
+(function testErrorReporting() {
+  window.onerror(null, null, null, null, new Error('Test: Something broke!'));
+})();
 ```
 
-  Open Stackdriver Error Reporting at https://console.cloud.google.com/errors to view the error and opt-in to notifications on new errors.
+Open [Stackdriver Error Reporting](https://console.cloud.google.com/errors) to view the error and opt-in to notifications on new errors.
 
 
 ## Setup for JavaScript
 
-### Download the module
+### Installing
 
 We recommend using npm: `npm install stackdriver-errors-js --save`.
 
 ### Initialization
 
-Here are all the initialization options available:
+Create a file that is included in your application entry point and has access to variables `myApiKey` and `myProjectId`. For ES6 projects it can be in the form:
 
-```HTML
-<!-- Warning: This is an experimental library -->
-<script defer src="node_modules/stackdriver-errors-js/dist/stackdriver-errors-concat.min.js"></script>
-<script type="text/javascript">
-window.addEventListener('DOMContentLoaded', function() {
-  var errorHandler = new StackdriverErrorReporter();
-  errorHandler.start({
-    key: '<my-api-key>',
-    projectId: '<my-project-id>',
-    service: '<my-service>',                    // (optional)
-    version: '<my-service-version>',            // (optional)
-    // reportUncaughtExceptions: false          // (optional) Set to false to stop reporting unhandled exceptions.
-    // reportUnhandledPromiseRejections: false  // (optional) Set to false to stop reporting unhandled promise rejections.
-    // disabled: true                           // (optional) Set to true to not report errors when calling report(), this can be used when developing locally.
-    // context: {user: 'user1'}                 // (optional) You can set the user later using setUser()
-  });
+```javascript
+// Warning: Experimental library, do not use in production environments.
+import StackdriverErrorReporter from 'stackdriver-errors-js';
+
+const errorHandler = new StackdriverErrorReporter();
+errorHandler.start({
+    key: myApiKey,
+    projectId: myProjectId,
+
+    // The following optional arguments can also be provided:
+
+    // service: myServiceName,
+    // Name of the service reporting the error, defaults to 'web'.
+
+    // version: myServiceVersion,
+    // Version identifier of the service reporting the error.
+
+    // reportUncaughtExceptions: false
+    // Set to false to prevent reporting unhandled exceptions.
+
+    // reportUnhandledPromiseRejections: false
+    // Set to false to prevent reporting unhandled promise rejections.
+
+    // disabled: true
+    // Set to true to not send error reports, this can be used when developing locally.
+
+    // context: {user: 'user1'}
+    // You can set the user later using setUser()
 });
-</script>
+```
+
+Note this uses the ES6 import syntax, if your project does not use a compilation step, instead the source with dependencies and polyfills bundled can be used directly:
+
+```javascript
+var StackdriverErrorReporter = require('stackdriver-errors-js/dist/stackdriver-errors-concat.min.js');
+
+var errorHandler = new StackdriverErrorReporter();
+errorHandler.start({
+    key: myApiKey,
+    projectId: myProjectId,
+    // Other optional arguments can be supplied, see above.
+});
 ```
 
 ### Usage
 
-Unhandled exception will now automatically be reported to Stackdriver Error Reporting.
+Unhandled exception will now automatically be sent to Stackdriver Error Reporting.
 
-You can also change your application code to report errors: `try { ... } catch(e) { errorHandler.report(e); }` or simply `errorHandler.report('Something broke!');`.
+You can also change your application code to report errors:
 
-You can set a user identifier at any time using `errorHandler.setUser('userId')`.
-
-### Source maps
-
-Only publicly available JavaScript source maps are supported.
-
-Your minified file need to be appended with a comment directive to your source map file:
-```JS
-//# sourceMappingURL=http://example.com/path/to/your/sourcemap.map
+```javascript
+try {
+  ...
+} catch(e) {
+  errorHandler.report(e);
+}
 ```
 
+Or simply:
+
+```javascript
+errorHandler.report('Something broke!');
+```
+
+You can set a user identifier at any time using:
+
+```javascript
+errorHandler.setUser('userId')
+```
 
 ## Setup for AngularJS
 
@@ -110,9 +146,9 @@ Your minified file need to be appended with a comment directive to your source m
 
 1. Load the `dist/stackdriver-errors-concat.min.js` JavaScript module.
 
-2. Implement a new [exception handler](https://docs.angularjs.org/api/ng/service/$exceptionHandler) for your AngularJS application:
+2. Implement a new [AngularJS exception handler](https://docs.angularjs.org/api/ng/service/$exceptionHandler) for your application:
 
-```JS
+```javascript
 angular.module('myAngularApp', [])
 
   .factory('$exceptionHandler', ['$log', '$window', function($log, $window) {
@@ -120,8 +156,7 @@ angular.module('myAngularApp', [])
     StackdriverErrors.start({
       key: '<my-api-key>',
       projectId: '<my-project-id>',
-      service: '<my-service>',              // (optional)
-      version: '<my-service-version>'       // (optional)
+      // Other optional arguments can be supplied, see above.
     });
 
     return function(exception, cause) {
@@ -135,13 +170,30 @@ angular.module('myAngularApp', [])
 
 Uncaught exception in angular expressions will now be reported to Stackdriver Error Reporting.
 
-If you wish, you can manually delegate exceptions, e.g. `try { ... } catch(e) { $exceptionHandler(e); }` or simply `$exceptionHandler('Something broke!');`.
+If you wish, you can manually delegate exceptions, for instance:
+```javascript
+try { ... } catch(e) { $exceptionHandler(e); }
+```
+Or simply:
+```javascript
+$exceptionHandler('Something broke!');
+```
 
 ## Setup for ReactJS
 
 Follow the general instructions denoted in _Setup for JavaScript_ to load and initialize the library.
 
-There is nothing specific that needs to be done with React, other than making sure to initialize the library in your root entry point(typically `index.js`).
+There is nothing specific that needs to be done with React, other than making sure to initialize the library in your root entry point (typically `index.js`).
+
+## Source maps
+
+Only publicly available JavaScript source maps are supported.
+
+Your minified file need to be appended with a comment directive to your source map file:
+
+```javascript
+//# sourceMappingURL=http://example.com/path/to/your/sourcemap.map
+```
 
 ## Configuring without an API key
 
@@ -162,70 +214,61 @@ where `targetUrl` is the url you'd like to send errors to and can be relative or
 
 ### Only reporting in the production environment with Webpack
 
-If using webpack and the `DefinePlugin`, it is advisable to wrap the initialization logic to only occur in your production environment.  Otherwise, with local development you will receive 403s if you restricted your API key to your production environment(which is _HIGHLY_ recommended).  The code for this would look something along these lines:
+If using webpack and the `DefinePlugin`, it is advisable to wrap the initialization logic to only occur in your production environment. Otherwise, with local development you will receive 403s if you restricted your API key to your production environment(which is _HIGHLY_ recommended). The code for this would look something along these lines:
 
 ```javascript
 // webpack.production.js
-// The rest of your webpack configuration
-// ...
-plugins: [
+
+module.exports = {
+  // ...
+  plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
-  // Your other plugins
-]
-// ...
-// The rest of your webpack configuration
+  ],
+  // ...
+}
 ```
 
 ```javascript
 // index.js
-const environment = process.env.NODE_ENV;
 
-if (environment === 'production') {
+if (process.env.NODE_ENV === 'production') {
   const errorHandler = new StackdriverErrorReporter();
   errorHandler.start({
     key: '<my-project-id>',
     projectId: '<my-project-id>',
-    service: '<my-service>',              // (optional)
-    version: '<my-service-version>'       // (optional)
   });
 }
 ```
 
 ### Usage as a utility
 
-If you would like to use the error logger throughout your application, there are many options that exist.  The simplest is to pull the initialization logic into its own file and reference it as necessary throughout your application as a module.  An example would be as follows:
+If you would like to use the error logger throughout your application, there are many options that exist. The simplest is to pull the initialization logic into its own file and reference it as necessary throughout your application as a module. An example would be as follows:
 
 ```javascript
 // errorHandlerUtility.js
-
-const environment = process.env.NODE_ENV;
+import StackdriverErrorReporter from 'stackdriver-errors-js';
 
 let errorHandler;
 
-if (environment === 'production') {
-
+if (process.env.NODE_ENV === 'production') {
   errorHandler = new StackdriverErrorReporter();
   errorHandler.start({
     key: '<my-project-id>',
     projectId: '<my-project-id>',
-    service: '<my-service>',              // (optional)
-    version: '<my-service-version>'       // (optional)
+    // Other optional arguments can be supplied, see above.
   });
-
 } else {
   errorHandler = {report: console.error};
 }
 
 export default errorHandler;
-
 ```
 
-Consumption of the errorHandlerUtility would essentially follow the following pattern:
+Consumption of `errorHandlerUtility` would essentially follow the following pattern:
 
 ```javascript
-// MyComponent.jsx
 import errorHandler from './errorHandlerUtility';
 
 try {
@@ -233,12 +276,9 @@ try {
 } catch (error) {
   errorHandler.report(error);
 }
-
 ```
 
-If the call to report has additional levels of wrapping code, extra
-frames can be trimmed from the top of generated stacks by using a
-number greater than one for the `skipLocalFrames` option:
+If the call to report has additional levels of wrapping code, extra frames can be trimmed from the top of generated stacks by using a number greater than one for the `skipLocalFrames` option:
 
 ```javascript
 import errorHandler from './errorHandlerUtility';
@@ -247,13 +287,23 @@ function backendReport (string) {
   // Skipping the two frames, for report() and for backendReport()
   errorHandler.report(error, {skipLocalFrames: 2});
 }
-
 ```
 
 ## FAQ
 
-**Q: Should I use this code in my production application?** A: This is an experimental library provided without any guarantee or official support. We do not recommend using it on production without performing a review of its code.
+**Q: Should I use this code in my production application?**
+A: This is an experimental library provided without any guarantee or official support. We do not recommend using it on production without performing a review of its code.
 
-**Q: Are private source maps supported?** A: No, see [#4](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/issues/4)
+**Q: Are private source maps supported?**
+A: No, see [issue #4](https://github.com/GoogleCloudPlatform/stackdriver-errors-js/issues/4).
 
-**Q: Can I propose changes to the library?** A: Yes, see [the Contributing documentation](CONTRIBUTING.md) for more details.
+**Q: Can I propose changes to the library?**
+A: Yes, see [the Contributing documentation](CONTRIBUTING.md) for more details.
+
+
+[travis-ci status image]: https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js.svg?branch=master
+[travis-ci status link]: https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js
+[david-dm status image]: https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js.svg
+[david-dm status link]: https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js
+[video thumbnail]: https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg
+[video link]: https://www.youtube.com/watch?v=cVpWVD75Hs8
