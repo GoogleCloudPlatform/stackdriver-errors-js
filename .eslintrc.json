@@ -19,7 +19,7 @@
     "camelcase": ["error", {"properties": "never"}],
     "comma-dangle": ["error", "always-multiline"],
     "comma-spacing": "error",
-    "complexity": ["error", 15],
+    "complexity": ["error", 10],
     "computed-property-spacing": "error",
     "curly": "error",
     "eqeqeq": ["error", "smart"],

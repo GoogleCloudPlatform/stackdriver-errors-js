@@ -56,34 +56,37 @@ StackdriverErrorReporter.prototype.start = function(config) {
   }
   this.reportUncaughtExceptions = config.reportUncaughtExceptions !== false;
   this.reportUnhandledPromiseRejections = config.reportUnhandledPromiseRejections !== false;
-  this.disabled = config.disabled || false;
+  this.disabled = !!config.disabled;
 
+  registerHandlers(this);
+};
+
+function registerHandlers(reporter) {
   // Register as global error handler if requested
   var noop = function() {};
-  var that = this;
-  if (this.reportUncaughtExceptions) {
+  if (reporter.reportUncaughtExceptions) {
     var oldErrorHandler = window.onerror || noop;
 
     window.onerror = function(message, source, lineno, colno, error) {
       if (error) {
-        that.report(error).catch(noop);
+        reporter.report(error).catch(noop);
       }
       oldErrorHandler(message, source, lineno, colno, error);
       return true;
     };
   }
-  if (this.reportUnhandledPromiseRejections) {
+  if (reporter.reportUnhandledPromiseRejections) {
     var oldPromiseRejectionHandler = window.onunhandledrejection || noop;
 
     window.onunhandledrejection = function(promiseRejectionEvent) {
       if (promiseRejectionEvent) {
-        that.report(promiseRejectionEvent.reason).catch(noop);
+        reporter.report(promiseRejectionEvent.reason).catch(noop);
       }
       oldPromiseRejectionHandler(promiseRejectionEvent.reason);
       return true;
     };
   }
-};
+}
 
 /**
  * Report an error to the Stackdriver Error Reporting API
@@ -120,9 +123,19 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
     // the first frame when using report() is always this library
     firstFrameIndex = options.skipLocalFrames || 1;
   }
-  var that = this;
+
+  var reportUrl = this.targetUrl || (
+    baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey);
+
+  return resolveError(err, firstFrameIndex)
+    .then(function(message) {
+      payload.message = message;
+      return sendErrorPayload(reportUrl, payload);
+    });
+};
+
+function resolveError(err, firstFrameIndex) {
   // This will use sourcemaps and normalize the stack frames
-  // eslint-disable-next-line no-undef
   return StackTrace.fromError(err).then(function(stack) {
     var lines = [err.toString()];
     // Reconstruct to a JS stackframe as expected by Error Reporting parsers.
@@ -145,16 +158,10 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
       err.toString(), '\n',
       '    (', err.file, ':', err.line, ':', err.column, ')',
     ].join('');
-  }).then(function(message) {
-    payload.message = message;
-    return that.sendErrorPayload(payload);
   });
-};
+}
 
-StackdriverErrorReporter.prototype.sendErrorPayload = function(payload) {
-  var defaultUrl = baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey;
-  var url = this.targetUrl || defaultUrl;
-
+function sendErrorPayload(url, payload) {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', url, true);
   xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -173,7 +180,7 @@ StackdriverErrorReporter.prototype.sendErrorPayload = function(payload) {
     };
     xhr.send(JSON.stringify(payload));
   });
-};
+}
 
 /**
  * Set the user for the current context.
