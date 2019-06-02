@@ -32,7 +32,7 @@ Add this line in your HTML code, before `</head>` and replace `<my-api-key>` and
 
 ```HTML
 <!-- Warning: This is an experimental library, do not use it on production environments -->
-<script defer src="https://cdn.jsdelivr.net/npm/stackdriver-errors-js@0.5.0/dist/stackdriver-errors-concat.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/stackdriver-errors-js@0.7.0/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 window.addEventListener('DOMContentLoaded', function() {
   var errorHandler = new StackdriverErrorReporter();
