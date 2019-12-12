@@ -158,6 +158,23 @@ errorHandler.start({
 
 where `targetUrl` is the url you'd like to send errors to and can be relative or absolute. This endpoint will need to support the [Report API endpoint](https://cloud.google.com/error-reporting/reference/rest/v1beta1/projects.events/report).
 
+## Custom message dispatching
+
+If you can't use HTTP Post requests for reporting your errors, or in need for some more complicated customizations, you may provide a custom function to handle the reporting.
+
+The function will be called with a payload argument (the same one that would have been sent on the HTTP Post request) and should return a Promise.  
+
+```javascript
+const errorHandler = new StackdriverErrorReporter();
+function myCustomFunction(payload) {
+  console.log("custom reporting function called with payload:", payload);
+  return Promise.resolve(); 
+}
+errorHandler.start({
+  customReportingFunction: myCustomFunction,
+});
+```
+
 ## Best Practices
 
 ### Only reporting in the production environment with Webpack
