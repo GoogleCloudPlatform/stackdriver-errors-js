@@ -32,6 +32,17 @@ function expectRequestWithMessage(message) {
 }
 
 /**
+ * Helper function testing if a given message has been reported inside a payload
+ * @param {string} [payload] - payload
+ * @param {string} [message] - Substring that message must contain.
+ */
+function expectPayloadWithMessage(payload, message) {
+  var sentBody = payload;
+  expect(sentBody).to.include.keys('message');
+  expect(sentBody.message).to.contain(message);
+}
+
+/**
  * Helper for testing call stack reporting
  * @param {string} [message] - Contents of error to throw.
  */
@@ -81,13 +92,13 @@ describe('Initialization', function() {
     expect(errorHandler.reportUnhandledPromiseRejections).to.equal(true);
   });
 
-  it('should fail if no API key or custom url', function() {
+  it('should fail if no API key or custom url or custom func', function() {
     expect(function() {
       errorHandler.start({projectId: 'projectId'});
     }).to.throw(Error, /API/);
   });
 
-  it('should fail if no project ID or custom url', function() {
+  it('should fail if no project ID or custom url or custom func', function() {
     expect(function() {
       errorHandler.start({key: 'key'});
     }).to.throw(Error, /project/);
@@ -96,6 +107,15 @@ describe('Initialization', function() {
   it('should succeed if custom target url provided without API key or project id', function() {
     expect(function() {
       errorHandler.start({targetUrl: 'custom-url'});
+    }).to.not.throw();
+  });
+
+  it('should succeed if custom function provided without API key or project id', function() {
+    expect(function() {
+      function f() {
+
+      }
+      errorHandler.start({customReportingFunction: f});
     }).to.not.throw();
   });
 
@@ -241,6 +261,23 @@ describe('Reporting errors', function() {
       return errorHandler.report(message).then(function() {
         expectRequestWithMessage(message);
         expect(requests[0].url).to.equal(targetUrl);
+      });
+    });
+  });
+
+  describe('Custom reporting function', function() {
+    it('should report error messages only to custom function', function() {
+      var funcResult = null;
+      function customFunc(payload) {
+        funcResult = payload;
+        return Promise.resolve();
+      }
+      errorHandler.start({customReportingFunction: customFunc});
+
+      var message = 'Something broke!';
+      return errorHandler.report(message).then(function() {
+        expectPayloadWithMessage(funcResult, message);
+        expect(requests.length).to.equal(0);
       });
     });
   });

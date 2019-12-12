@@ -33,19 +33,21 @@ var StackdriverErrorReporter = function() {};
  * @param {string} [config.context.user] - the user who caused or was affected by the error.
  * @param {String} config.key - the API key to use to call the API.
  * @param {String} config.projectId - the Google Cloud Platform project ID to report errors to.
+ * @param {Function} config.customReportingFunction - Custom function to be called with the error payload for reporting, instead of HTTP request. The function should return a Promise.
  * @param {String} [config.service=web] - service identifier.
  * @param {String} [config.version] - version identifier.
  * @param {Boolean} [config.reportUncaughtExceptions=true] - Set to false to stop reporting unhandled exceptions.
  * @param {Boolean} [config.disabled=false] - Set to true to not report errors when calling report(), this can be used when developping locally.
  */
 StackdriverErrorReporter.prototype.start = function(config) {
-  if (!config.key && !config.targetUrl) {
-    throw new Error('Cannot initialize: No API key or target url provided.');
+  if (!config.key && !config.targetUrl && !config.customReportingFunction) {
+    throw new Error('Cannot initialize: No API key, target url or custom reporting function provided.');
   }
-  if (!config.projectId && !config.targetUrl) {
-    throw new Error('Cannot initialize: No project ID or target url provided.');
+  if (!config.projectId && !config.targetUrl && !config.customReportingFunction) {
+    throw new Error('Cannot initialize: No project ID, target url or custom reporting function provided.');
   }
 
+  this.customReportingFunction = config.customReportingFunction;
   this.apiKey = config.key;
   this.projectId = config.projectId;
   this.targetUrl = config.targetUrl;
@@ -127,9 +129,14 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
   var reportUrl = this.targetUrl || (
     baseAPIUrl + this.projectId + '/events:report?key=' + this.apiKey);
 
+  var customFunc = this.customReportingFunction;
+
   return resolveError(err, firstFrameIndex)
     .then(function(message) {
       payload.message = message;
+      if (customFunc) {
+        return customFunc(payload);
+      }
       return sendErrorPayload(reportUrl, payload);
     });
 };
