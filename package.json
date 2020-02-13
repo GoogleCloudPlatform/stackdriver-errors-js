@@ -10,8 +10,7 @@
     "prepare": "npm run clean && npm run dist",
     "pretest": "npm run lint",
     "start": "gulp demo && http-server ./dist -o",
-    "test": "mocha -r test/setup.js test/test.js",
-    "version": "sed -i s/@[0-9.]\\\\{5,\\\\}/@${npm_package_version}/g README.md && git add README.md"
+    "test": "mocha -r test/setup.js test/test.js"
   },
   "repository": {
     "type": "git",

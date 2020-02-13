@@ -29,11 +29,16 @@ If API keys are not an option for your team, [use a custom url](
 
 The library can either be used as a standalone script, or incorporated as a module into a larger javascript application.
 
-For use in any HTML page or without a specific framework, include the standalone script from CDN and set up the error handler in a page load event. For instance, use include the following HTML in the page `<head>` and replace `<my-api-key>` and `<my-project-id>` with your API key and Google Cloud project ID string:
+For use in any HTML page or without a specific framework, include the standalone script from CDN and set up the error handler in a page load event.
+For instance, use include the following HTML in the page `<head>` and replace:
+
+* `<version>` with the [latest version of the NPM package](https://www.npmjs.com/package/stackdriver-errors-js) 
+* `<my-api-key>` with your API key
+* `<my-project-id>` with  and Google Cloud project ID string:
 
 ```HTML
 <!-- Warning: Experimental library, do not use in production environments. -->
-<script defer src="https://cdn.jsdelivr.net/npm/stackdriver-errors-js@0.7.0/dist/stackdriver-errors-concat.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/stackdriver-errors-js@<version>/dist/stackdriver-errors-concat.min.js"></script>
 <script type="text/javascript">
 window.addEventListener('DOMContentLoaded', function() {
   var errorHandler = new StackdriverErrorReporter();
