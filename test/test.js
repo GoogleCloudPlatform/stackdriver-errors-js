@@ -122,7 +122,7 @@ describe('Initialization', function() {
   it('should have default context', function() {
     errorHandler.start({key: 'key', projectId: 'projectId'});
     expect(errorHandler.context).to.eql({httpRequest: {
-      url: window.location.url,
+      url: 'http://stackdriver-errors.test/',
       userAgent: window.navigator.userAgent,
     }});
   });
@@ -150,7 +150,7 @@ describe('Initialization', function() {
         method: method,
         userAgent: userAgent,
         remoteIp: remoteIp,
-        url: window.location.url,
+        url: 'http://stackdriver-errors.test/',
       },
     });
   });
