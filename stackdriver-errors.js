@@ -144,12 +144,12 @@ function addDefaultHttpRequestContext(httpRequestContext) {
   }
   httpRequestContext.userAgent =
   httpRequestContext.userAgent === undefined
-      ? window.navigator.userAgent
-      : httpRequestContext.userAgent;
+    ? window.navigator.userAgent
+    : httpRequestContext.userAgent;
   httpRequestContext.url =
   httpRequestContext.url === undefined
-      ? window.location.href
-      : httpRequestContext.url;
+    ? window.location.href
+    : httpRequestContext.url;
   return httpRequestContext;
 }
 
