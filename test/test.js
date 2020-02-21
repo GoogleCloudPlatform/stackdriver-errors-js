@@ -298,7 +298,7 @@ describe('Reporting errors', function() {
         httpRequest: httpRequestContext,
       };
 
-      errorHandler.start({context: context});
+      errorHandler.start({key: 'key', projectId: 'projectId', context: context});
 
       var message = 'Something broke!';
       return errorHandler.report(message).then(function() {
