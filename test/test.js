@@ -121,7 +121,10 @@ describe('Initialization', function() {
 
   it('should have default context', function() {
     errorHandler.start({key: 'key', projectId: 'projectId'});
-    expect(errorHandler.context).to.eql({});
+    expect(errorHandler.context).to.eql({httpRequest: {
+      url: window.location.url,
+      userAgent: window.navigator.userAgent
+    }});
   });
 
   it('should allow to specify a default context', function() {
@@ -141,11 +144,14 @@ describe('Initialization', function() {
       httpRequest: httpRequestContext,
     };
     errorHandler.start({context: context, key: 'key', projectId: 'projectId'});
-    expect(errorHandler.context).to.eql({user: user});
-    expect(errorHandler.context.httpRequest).to.eql({method: method});
-    expect(errorHandler.context.httpRequest).to.eql({userAgent: userAgent});
-    expect(errorHandler.context.httpRequest).to.eql({remoteIp: remoteIp});
-    expect(errorHandler.context.httpRequest).to.not({url: undefined});
+    expect(errorHandler.context).to.eql({
+      user: user,
+      httpRequest: {
+        method: method,
+        userAgent: userAgent,
+        remoteIp: remoteIp,
+        url: window.location.url,
+    }});
   });
 });
 
