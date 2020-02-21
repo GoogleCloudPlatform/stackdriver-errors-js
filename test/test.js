@@ -283,6 +283,35 @@ describe('Reporting errors', function() {
   });
 });
 
+describe('Custom http request context', function () {
+  it('should report error messages with custom http request context', function () {
+    var method = "GET";
+    var userAgent = "bot";
+    var remoteIp = "123.45.67.89";
+
+    var httpRequestContext = {
+      method: method,
+      userAgent: userAgent,
+      remoteIp: remoteIp
+    };
+
+    var context = {
+      httpRequest: httpRequestContext
+    };
+
+    errorHandler.start({ context: context });
+
+    var message = 'Something broke!';
+    return errorHandler.report(message).then(function () {
+      expectRequestWithMessage(message);
+      expectRequestWithMessage("method: " + method);
+      expectRequestWithMessage("userAgent: " + userAgent);
+      expectRequestWithMessage("remoteIp: " + remoteIp);
+      expectRequestWithMessage("url"); // specified to be window.location.href by default
+    });
+  });
+});
+
 describe('Unhandled exceptions', function() {
   it('should be reported by default', function(done) {
     errorHandler.start({key: 'key', projectId: 'projectId'});
