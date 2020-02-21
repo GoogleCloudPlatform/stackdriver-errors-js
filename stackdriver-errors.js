@@ -52,6 +52,7 @@ StackdriverErrorReporter.prototype.start = function(config) {
   this.projectId = config.projectId;
   this.targetUrl = config.targetUrl;
   this.context = config.context || {};
+  this.context.httpRequest = setupDefaultHttpRequestContext(this.context.httpRequest);
   this.serviceContext = {service: config.service || 'web'};
   if (config.version) {
     this.serviceContext.version = config.version;
@@ -109,7 +110,6 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
   var payload = {};
   payload.serviceContext = this.serviceContext;
   payload.context = this.context;
-  payload.context.httpRequest = addDefaultHttpRequestContext(payload.context.httpRequest);
 
   var firstFrameIndex = 0;
   if (typeof err == 'string' || err instanceof String) {
@@ -138,7 +138,7 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
     });
 };
 
-function addDefaultHttpRequestContext(httpRequestContext) {
+function setupDefaultHttpRequestContext(httpRequestContext) {
   if (httpRequestContext === undefined) {
     httpRequestContext = {};
   }

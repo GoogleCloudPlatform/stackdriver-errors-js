@@ -125,8 +125,27 @@ describe('Initialization', function() {
   });
 
   it('should allow to specify a default context', function() {
-    errorHandler.start({context: {user: '1234567890'}, key: 'key', projectId: 'projectId'});
-    expect(errorHandler.context).to.eql({user: '1234567890'});
+    var method = 'GET';
+    var userAgent = 'bot';
+    var remoteIp = '123.45.67.89';
+    var user = '1234567890';
+
+    var httpRequestContext = {
+      method: method,
+      userAgent: userAgent,
+      remoteIp: remoteIp,
+    };
+
+    var context = {
+      user: '1234567890',
+      httpRequest: httpRequestContext,
+    };
+    errorHandler.start({context: context, key: 'key', projectId: 'projectId'});
+    expect(errorHandler.context).to.eql({user: user});
+    expect(errorHandler.context.httpRequest).to.eql({method: method});
+    expect(errorHandler.context.httpRequest).to.eql({userAgent: userAgent});
+    expect(errorHandler.context.httpRequest).to.eql({remoteIp: remoteIp});
+    expect(errorHandler.context.httpRequest).to.not({url: undefined});
   });
 });
 
@@ -278,35 +297,6 @@ describe('Reporting errors', function() {
       return errorHandler.report(message).then(function() {
         expectPayloadWithMessage(funcResult, message);
         expect(requests.length).to.equal(0);
-      });
-    });
-  });
-
-  describe('Custom http request context', function() {
-    it('should report error messages with custom http request context', function() {
-      var method = 'GET';
-      var userAgent = 'bot';
-      var remoteIp = '123.45.67.89';
-
-      var httpRequestContext = {
-        method: method,
-        userAgent: userAgent,
-        remoteIp: remoteIp,
-      };
-
-      var context = {
-        httpRequest: httpRequestContext,
-      };
-
-      errorHandler.start({key: 'key', projectId: 'projectId', context: context});
-
-      var message = 'Something broke!';
-      return errorHandler.report(message).then(function() {
-        expectRequestWithMessage(message);
-        expectRequestWithMessage('method: ' + method);
-        expectRequestWithMessage('userAgent: ' + userAgent);
-        expectRequestWithMessage('remoteIp: ' + remoteIp);
-        expectRequestWithMessage('url'); // specified to be window.location.href by default
       });
     });
   });
