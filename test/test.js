@@ -123,7 +123,7 @@ describe('Initialization', function() {
     errorHandler.start({key: 'key', projectId: 'projectId'});
     expect(errorHandler.context).to.eql({httpRequest: {
       url: window.location.url,
-      userAgent: window.navigator.userAgent
+      userAgent: window.navigator.userAgent,
     }});
   });
 
@@ -151,7 +151,8 @@ describe('Initialization', function() {
         userAgent: userAgent,
         remoteIp: remoteIp,
         url: window.location.url,
-    }});
+      },
+    });
   });
 });
 
