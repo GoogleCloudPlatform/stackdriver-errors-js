@@ -109,17 +109,7 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
   var payload = {};
   payload.serviceContext = this.serviceContext;
   payload.context = this.context;
-  if (payload.context.httpRequest === undefined) {
-    payload.context.httpRequest = {};
-  }
-  payload.context.httpRequest.userAgent =
-    payload.context.httpRequest.userAgent === undefined
-      ? window.navigator.userAgent
-      : payload.context.httpRequest.userAgent;
-  payload.context.httpRequest.url =
-    payload.context.httpRequest.url === undefined
-      ? window.location.href
-      : payload.context.httpRequest.url;
+  payload.context.httpRequest = addDefaultHttpRequestContext(payload.context.httpRequest);
 
   var firstFrameIndex = 0;
   if (typeof err == 'string' || err instanceof String) {
@@ -147,6 +137,21 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
       return sendErrorPayload(reportUrl, payload);
     });
 };
+
+function addDefaultHttpRequestContext(httpRequestContext) {
+  if (httpRequestContext === undefined) {
+    httpRequestContext = {};
+  }
+  httpRequestContext.userAgent =
+  httpRequestContext.userAgent === undefined
+      ? window.navigator.userAgent
+      : httpRequestContext.userAgent;
+  httpRequestContext.url =
+  httpRequestContext.url === undefined
+      ? window.location.href
+      : httpRequestContext.url;
+  return httpRequestContext;
+}
 
 function resolveError(err, firstFrameIndex) {
   // This will use sourcemaps and normalize the stack frames
