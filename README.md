@@ -101,8 +101,18 @@ errorHandler.start({
     // disabled: true
     // Set to true to not send error reports, this can be used when developing locally.
 
-    // context: {user: 'user1'}
-    // You can set the user later using setUser()
+    // context: {
+    //   user: 'user1', // The user who caused or was affected by the crash, default unspecified, but can be set later using `setUser()`
+    //   httpRequest: {
+    //     method: 'GET', // The type of HTTP request, such as `GET`, `POST`, etc., default unspecified
+    //     url: 'https://www.google.com', // The URL Of the request, default to `window.location.href`
+    //     userAgent: 'Chrome/80.0', // The user agent information that is provided with the request, default to `window.navigator.userAgent`
+    //     refererrer: 'https://www.bing.com', // The referrer information that is provided with the request, default unspecified
+    //     responseStatusCode: 404, // The HTTP response status code for the request, default unspecified
+    //     remoteIp: The IP address from which the request originated, default unspecified
+    //   }
+    // }
+    // Context of the errored request.
 });
 ```
 
