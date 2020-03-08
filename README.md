@@ -93,13 +93,13 @@ errorHandler.start({
     // Version identifier of the service reporting the error.
 
     // reportUncaughtExceptions: false
-    // Set to false to prevent reporting unhandled exceptions.
+    // Set to false to prevent reporting unhandled exceptions, default: `true`.
 
     // reportUnhandledPromiseRejections: false
-    // Set to false to prevent reporting unhandled promise rejections.
+    // Set to false to prevent reporting unhandled promise rejections, default: `true`.
 
     // disabled: true
-    // Set to true to not send error reports, this can be used when developing locally.
+    // Set to true to not send error reports, this can be used when developing locally, default: `false`.
 
     // context: {user: 'user1'}
     // You can set the user later using setUser()
