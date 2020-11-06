@@ -1,4 +1,4 @@
 assign_issues:
-  - googleapis/api-logging
+  - GoogleCloudPlatform/observability-devx
 assign_prs:
-  - googleapis/api-logging
+  - GoogleCloudPlatform/observability-devx
