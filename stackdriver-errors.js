@@ -53,7 +53,7 @@ StackdriverErrorReporter.prototype.start = function(config) {
   this.targetUrl = config.targetUrl;
   this.context = config.context || {};
   this.serviceContext = {service: config.service || 'web',
-                         resourceType: config.resourceType || 'reported_errors,
+                         resourceType: config.resourceType || 'reported_errors',
                          severity: 'ERROR' || config.severity
                         };
   if (config.version) {
