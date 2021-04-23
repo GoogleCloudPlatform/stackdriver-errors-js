@@ -249,6 +249,24 @@ describe('Reporting errors', function() {
           expect(err.message).to.equal('503 http response on stackdriver report');
         });
       });
+
+      it('should not handle quota exceeded error responses', function() {
+        requestHandler = function(req) {
+          // HTTP 429 returned from Stackdriver after reaching reporting quota.
+          req.respond(429, {'Content-Type': 'text/plain'}, '');
+        };
+        errorHandler.start({key: 'key', projectId: 'projectId'});
+        var message = 'News that will be rejected on send';
+        return errorHandler.report(message).then(function() {
+          throw new Error('unexpected fulfilled report');
+        }, function(fakeErr) {
+          expectRequestWithMessage(message);
+          // We don't expect an Error to be returned in this case.
+          expect(fakeErr.name).to.equal('Http429FakeError');
+          expect(fakeErr.message).to.equal(
+            'quota or rate limiting error on stackdriver report');
+        });
+      });
     });
   });
 

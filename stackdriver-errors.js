@@ -179,6 +179,15 @@ function sendErrorPayload(url, payload) {
         var code = xhr.status;
         if (code >= 200 && code < 300) {
           resolve({message: payload.message});
+        } else if (code === 429) {
+          // HTTP 429 responses are returned by Stackdriver when API quota
+          // is exceeded. We should not try to reject these as unhandled errors
+          // or we may cause an infinite loop with 'reportUncaughtExceptions'.
+          reject(
+            {
+              message: 'quota or rate limiting error on stackdriver report',
+              name: 'Http429FakeError',
+            });
         } else {
           var condition = code ? code + ' http response'  : 'network error';
           reject(new Error(condition + ' on stackdriver report'));
