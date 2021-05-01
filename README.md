@@ -1,25 +1,25 @@
-# Experimental Client-side JavaScript library for Stackdriver Error Reporting
+# Experimental Client-side JavaScript library for Cloud Error Reporting
 
 > **This is not an official Google product.** This module is experimental and may not be ready for use.
 
 [![Build Status][travis-ci status image]][travis-ci status link]
 
-This **experimental** library provides Stackdriver Error Reporting support for client-side web JavaScript applications. [Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. For server-side Node.js error reporting, use [cloud-errors-nodejs](https://github.com/GoogleCloudPlatform/cloud-errors-nodejs) instead.
+This **experimental** library provides Cloud Error Reporting support for client-side web JavaScript applications. [Cloud Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. For server-side Node.js error reporting, use [cloud-errors-nodejs](https://github.com/GoogleCloudPlatform/cloud-errors-nodejs) instead.
 
 Here's an introductory video:
 
-[![Learn about Error Reporting in Stackdriver][video thumbnail]][video link]
+[![Learn about Cloud Error Reporting][video thumbnail]][video link]
 
 ## Prerequisites
 
 1. You need a [Google Cloud project](https://console.cloud.google.com).
 
-2. [Enable the Stackdriver Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
+2. [Enable the Cloud Error Reporting API](https://console.cloud.google.com/apis/api/clouderrorreporting.googleapis.com/overview) for your project. We highly recommend to restrict the usage of the key to your website URL only using an 'HTTP referrer' restriction.
 
 3. Create a browser API key:
    - Follow [using api keys instructions](https://support.google.com/cloud/answer/6158862) to get an API key for your project.
    - Recommended: Use **Application restrictions** to restrict this key to your website.
-   - Recommended: Use **API restrictions** to limit this key to the *Stackdriver Error Reporting API*.
+   - Recommended: Use **API restrictions** to limit this key to the *Cloud Error Reporting API*.
 
 If API keys are not an option for your team, [use a custom url](
 #configuring-without-an-api-key) to send your errors to your backend.
@@ -61,7 +61,7 @@ Open the page that you instrumented, open the Developer Tools console and enter 
 })();
 ```
 
-Open [Stackdriver Error Reporting](https://console.cloud.google.com/errors) to view the error and opt-in to notifications on new errors.
+Open [Cloud Error Reporting](https://console.cloud.google.com/errors) to view the error and opt-in to notifications on new errors.
 
 
 ## Setup for JavaScript
