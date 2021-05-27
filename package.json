@@ -34,6 +34,7 @@
     "browser-pack-flat": "^3.4.1",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
+    "core-js": "^2.6.9",
     "eslint": "^5.16.0",
     "eslint-plugin-mocha": "^5.3.0",
     "gulp": "^3.9.1",
@@ -49,7 +50,6 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "core-js": "^2.6.9",
     "stacktrace-js": "^2.0.0"
   }
 }
