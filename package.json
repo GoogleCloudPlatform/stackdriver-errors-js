@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "rimraf dist/",
     "dist": "gulp lib-concat",
+    "preinstall": "npx npm-force-resolutions",
     "lint": "eslint --ignore-path .gitignore .",
     "prepare": "npm run clean && npm run dist",
     "pretest": "npm run lint",
@@ -28,6 +29,9 @@
     "javascript",
     "web"
   ],
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
+  },
   "author": "steren@google.com",
   "license": "Apache-2.0",
   "devDependencies": {
