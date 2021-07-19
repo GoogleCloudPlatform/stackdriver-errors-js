@@ -26,11 +26,11 @@ var SRC_FILE = 'stackdriver-errors.js';
 var DEST = 'dist/';
 
 var polyfills = [
-  'core-js/fn/array/filter',
-  'core-js/fn/array/for-each',
-  'core-js/fn/array/map',
-  'core-js/fn/function/bind',
-  'core-js/fn/promise',
+  'core-js/features/array/filter',
+  'core-js/features/array/for-each',
+  'core-js/features/array/map',
+  'core-js/features/function/bind',
+  'core-js/features/promise',
 ];
 
 gulp.task('lib-concat', function() {
@@ -72,5 +72,3 @@ gulp.task('demo-js', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['lib-concat']);
-gulp.task('demo', ['lib-concat', 'demo-html', 'demo-js']);
