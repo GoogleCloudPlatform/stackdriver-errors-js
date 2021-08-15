@@ -14,7 +14,7 @@ run package commands. Examples using npm but the same commands work with yarn:
 The demo allows you to test reporting errors from the local library with your
 own API key and project ID, see the network tab of your browser dev tools for
 the specific requests that get sent. Note you can expect to see
-[CORS preflight requests] but the behaviour once deployed can vary.
+[CORS preflight requests] but the behavior once deployed can vary.
 
 ## Code reviews
 
