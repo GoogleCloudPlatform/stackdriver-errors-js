@@ -68,6 +68,11 @@ declare module 'stackdriver-errors-js' {
    */
   interface InitialConfiguration {
     /**
+     * Overwrite endpoint that errors are reported to.
+     */
+    targetUrl?: string;
+    
+    /**
      * The context in which the error occurred
      */
     context?: Context;
