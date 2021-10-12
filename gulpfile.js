@@ -74,4 +74,3 @@ gulp.task('demo-js', function() {
     .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest('dist'));
 });
-
