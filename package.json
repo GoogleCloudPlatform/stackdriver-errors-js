@@ -10,7 +10,7 @@
     "lint": "eslint --ignore-path .gitignore .",
     "prepare": "npm run clean && npm run dist",
     "pretest": "npm run lint",
-    "start": "gulp demo && http-server ./dist -o",
+    "start": "gulp lib-concat demo-js demo-html && http-server ./dist -o",
     "test": "mocha -r test/setup.js test/test.js"
   },
   "repository": {
