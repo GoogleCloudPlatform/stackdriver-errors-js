@@ -55,7 +55,7 @@ gulp.task('lib-concat', function() {
     .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest(DEST))
     .pipe(gulp.src(TYPINGS_FILE))
-    .pipe(gulp.dest(DEST));  
+    .pipe(gulp.dest(DEST));
 });
 
 gulp.task('demo-html', function() {
