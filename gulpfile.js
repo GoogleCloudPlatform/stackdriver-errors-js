@@ -23,7 +23,6 @@ var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 
 var SRC_FILE = 'stackdriver-errors.js';
-var TYPINGS_FILE = 'stackdriver-errors.d.ts';
 var DEST = 'dist/';
 
 gulp.task('lib-concat', function() {
@@ -44,8 +43,6 @@ gulp.task('lib-concat', function() {
     .pipe(uglify())
     .pipe(rename({extname: '.min.js'}))
     .pipe(sourcemaps.write('maps'))
-    .pipe(gulp.dest(DEST))
-    .pipe(gulp.src(TYPINGS_FILE))
     .pipe(gulp.dest(DEST));
 });
 

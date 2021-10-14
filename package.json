@@ -18,7 +18,8 @@
     "url": "https://github.com/GoogleCloudPlatform/stackdriver-errors-js"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "stackdriver-errors.d.ts"
   ],
   "keywords": [
     "stackdriver",
