@@ -34,7 +34,6 @@
     "browser-pack-flat": "^3.4.2",
     "browserify": "^16.5.2",
     "chai": "^4.3.4",
-    "core-js": "^3.11.3",
     "eslint": "^5.16.0",
     "eslint-plugin-mocha": "^5.3.0",
     "gulp": "^4.0.2",
