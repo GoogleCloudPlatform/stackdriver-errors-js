@@ -26,21 +26,12 @@ var SRC_FILE = 'stackdriver-errors.js';
 var TYPINGS_FILE = 'stackdriver-errors.d.ts';
 var DEST = 'dist/';
 
-var polyfills = [
-  'core-js/features/array/filter',
-  'core-js/features/array/for-each',
-  'core-js/features/array/map',
-  'core-js/features/function/bind',
-  'core-js/features/promise',
-];
-
 gulp.task('lib-concat', function() {
   return browserify({
     debug: true,
     entries: SRC_FILE,
     standalone: 'StackdriverErrorReporter',
   })
-    .require(polyfills)
     .plugin('browser-pack-flat/plugin')
     .bundle()
     .pipe(source(SRC_FILE))
