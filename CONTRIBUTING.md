@@ -51,7 +51,7 @@ the one above, the [Software Grant and Corporate Contributor License Agreement].
 From master branch with all required changes landed and pulled:
 
 * Run `npm version minor -m 'Release %s'` with semver component as needed.
-* Push commit and new tag with `git push --tags`.
+* Push commit and new tag with `git push --follow-tags`.
 * Create a [GitHub Release].
 * Publish new package to npm registry with `npm publish`.
 
