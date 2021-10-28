@@ -2,8 +2,6 @@
 
 > **This is not an official Google product.** This module is experimental and may not be ready for use.
 
-[![Build Status][travis-ci status image]][travis-ci status link]
-
 This **experimental** library provides Cloud Error Reporting support for client-side web JavaScript applications. [Cloud Error Reporting](https://cloud.google.com/error-reporting/) is a feature of Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by applications running in almost any environment. For server-side Node.js error reporting, use [cloud-errors-nodejs](https://github.com/GoogleCloudPlatform/cloud-errors-nodejs) instead.
 
 Here's an introductory video:
@@ -322,9 +320,5 @@ A: No, see [issue #4](https://github.com/GoogleCloudPlatform/stackdriver-errors-
 A: Yes, see [the Contributing documentation](CONTRIBUTING.md) for more details.
 
 
-[travis-ci status image]: https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js.svg?branch=master
-[travis-ci status link]: https://travis-ci.org/GoogleCloudPlatform/stackdriver-errors-js
-[david-dm status image]: https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js.svg
-[david-dm status link]: https://david-dm.org/GoogleCloudPlatform/stackdriver-errors-js
 [video thumbnail]: https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg
 [video link]: https://www.youtube.com/watch?v=cVpWVD75Hs8
