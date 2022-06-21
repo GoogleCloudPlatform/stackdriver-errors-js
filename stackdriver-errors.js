@@ -84,7 +84,7 @@ function registerHandlers(reporter) {
       if (promiseRejectionEvent) {
         reporter.report(promiseRejectionEvent.reason).catch(noop);
       }
-      oldPromiseRejectionHandler(promiseRejectionEvent.reason);
+      oldPromiseRejectionHandler(promiseRejectionEvent);
       return true;
     };
   }
