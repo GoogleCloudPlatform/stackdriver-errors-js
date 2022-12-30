@@ -20,11 +20,14 @@ var StackTrace = require('stacktrace-js');
  * URL endpoint of the Stackdriver Error Reporting report API.
  */
 var baseAPIUrl = 'https://clouderrorreporting.googleapis.com/v1beta1/projects/';
-
+var globalWindow;
 /**
  * An Error handler that sends errors to the Stackdriver Error Reporting API.
+ * @param {Window} [overrideWindowObject] an optional argument in case we would like to use different object to represent the window object
  */
-var StackdriverErrorReporter = function() {};
+var StackdriverErrorReporter = function(overrideWindowObject) {
+  globalWindow = overrideWindowObject || (typeof window !== 'undefined' && window);
+};
 
 /**
  * Initialize the StackdriverErrorReporter object.
@@ -67,9 +70,9 @@ function registerHandlers(reporter) {
   // Register as global error handler if requested
   var noop = function() {};
   if (reporter.reportUncaughtExceptions) {
-    var oldErrorHandler = window.onerror || noop;
+    var oldErrorHandler = globalWindow.onerror || noop;
 
-    window.onerror = function(message, source, lineno, colno, error) {
+    globalWindow.onerror = function(message, source, lineno, colno, error) {
       if (error) {
         reporter.report(error).catch(noop);
       }
@@ -78,9 +81,9 @@ function registerHandlers(reporter) {
     };
   }
   if (reporter.reportUnhandledPromiseRejections) {
-    var oldPromiseRejectionHandler = window.onunhandledrejection || noop;
+    var oldPromiseRejectionHandler = globalWindow.onunhandledrejection || noop;
 
-    window.onunhandledrejection = function(promiseRejectionEvent) {
+    globalWindow.onunhandledrejection = function(promiseRejectionEvent) {
       if (promiseRejectionEvent) {
         reporter.report(promiseRejectionEvent.reason).catch(noop);
       }
@@ -110,8 +113,8 @@ StackdriverErrorReporter.prototype.report = function(err, options) {
   payload.serviceContext = this.serviceContext;
   payload.context = this.context;
   payload.context.httpRequest = {
-    userAgent: window.navigator.userAgent,
-    url: window.location.href,
+    userAgent: globalWindow.navigator.userAgent,
+    url: globalWindow.location.href,
   };
 
   var firstFrameIndex = 0;
