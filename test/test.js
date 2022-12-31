@@ -438,8 +438,6 @@ describe('Regular (empty) constructor - default window object', function() {
 var customWindow = {
   location: {href: 'http://other-stackdriver-errors.test/'},
   navigator: {userAgent: 'FakeAgent2'},
-  onerror: function() { },
-  onunhandledrejection: function() { },
 };
 describe('Pass custom window object to constructor ', function() {
   beforeEach(function() {
