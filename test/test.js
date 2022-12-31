@@ -51,10 +51,6 @@ function throwError(message) {
 }
 
 beforeEach(function() {
-  window.onerror= function() {};
-  window.onunhandledrejection = function() {};
-  errorHandler = new StackdriverErrorReporter();
-
   xhr = fakeXhr.useFakeXMLHttpRequest();
   xhr.useFilters = true;
   xhr.addFilter(function(method, url) {
@@ -76,319 +72,395 @@ beforeEach(function() {
   };
 });
 
-describe('Initialization', function() {
-  it('should have default service', function() {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
-    expect(errorHandler.serviceContext.service).to.equal('web');
-  });
-
-  it('should by default report uncaught exceptions', function() {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
-    expect(errorHandler.reportUncaughtExceptions).to.equal(true);
-  });
-
-  it('should by default report unhandled promise rejections', function() {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
-    expect(errorHandler.reportUnhandledPromiseRejections).to.equal(true);
-  });
-
-  it('should fail if no API key or custom url or custom func', function() {
-    expect(function() {
-      errorHandler.start({projectId: 'projectId'});
-    }).to.throw(Error, /API/);
-  });
-
-  it('should fail if no project ID or custom url or custom func', function() {
-    expect(function() {
-      errorHandler.start({key: 'key'});
-    }).to.throw(Error, /project/);
-  });
-
-  it('should succeed if custom target url provided without API key or project id', function() {
-    expect(function() {
-      errorHandler.start({targetUrl: 'custom-url'});
-    }).to.not.throw();
-  });
-
-  it('should succeed if custom function provided without API key or project id', function() {
-    expect(function() {
-      function f() {
-
-      }
-      errorHandler.start({customReportingFunction: f});
-    }).to.not.throw();
-  });
-
-  it('should have default context', function() {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
-    expect(errorHandler.context).to.eql({});
-  });
-
-  it('should allow to specify a default context', function() {
-    errorHandler.start({context: {user: '1234567890'}, key: 'key', projectId: 'projectId'});
-    expect(errorHandler.context).to.eql({user: '1234567890'});
-  });
-});
-
-describe('Disabling', function() {
-  it('should not report errors if disabled', function() {
-    errorHandler.start({key: 'key', projectId: 'projectId', disabled: true});
-    return errorHandler.report('do not report').then(function() {
-      expect(requests.length).to.equal(0);
-    });
-  });
-});
-
-describe('Reporting errors', function() {
-  describe('Default configuration', function() {
-    beforeEach(function() {
+function initialization() {
+  return function() {
+    it('should have default service', function() {
       errorHandler.start({key: 'key', projectId: 'projectId'});
+      expect(errorHandler.serviceContext.service).to.equal('web');
     });
 
-    it('should report error messages with location', function() {
-      var message = 'Something broke!';
-      return errorHandler.report(message).then(function() {
-        expectRequestWithMessage(message);
-      });
+
+    it('should by default report uncaught exceptions', function() {
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+      expect(errorHandler.reportUncaughtExceptions).to.equal(true);
     });
 
-    it('should include report origin by default', function() {
-      var helper = function helperFn(handler) {
-        return handler.report('common message');
-      };
-      return helper(errorHandler).then(function() {
-        expectRequestWithMessage(': common message\n    at helperFn (');
-      });
+
+    it('should by default report unhandled promise rejections', function() {
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+      expect(errorHandler.reportUnhandledPromiseRejections).to.equal(true);
     });
 
-    it('should skip number of frames if option is given', function() {
-      var helper = function outerFn(handler) {
-        return (function innerFn() {
-          return handler.report('common message', {skipLocalFrames: 2});
-        })();
-      };
-      return helper(errorHandler).then(function() {
-        expectRequestWithMessage(': common message\n    at outerFn (');
-      });
+
+    it('should fail if no API key or custom url or custom func', function() {
+      expect(function() {
+        errorHandler.start({projectId: 'projectId'});
+      }).to.throw(Error, /API/);
     });
 
-    it('should extract and send stack traces from Errors', function() {
-      var message = 'custom message';
-      // Throw and catch error to attach a stacktrace
-      try {
-        throw new TypeError(message);
-      } catch (e) {
-        return errorHandler.report(e).then(function() {
-          expectRequestWithMessage(message);
-        });
-      }
+    it('should fail if no project ID or custom url or custom func', function() {
+      expect(function() {
+        errorHandler.start({key: 'key'});
+      }).to.throw(Error, /project/);
     });
 
-    it('should extract and send functionName in stack traces', function() {
-      var message = 'custom message';
-      // Throw and catch error to attach a stacktrace
-      try {
-        throwError(message);
-      } catch (e) {
-        return errorHandler.report(e).then(function() {
-          expectRequestWithMessage('throwError');
-        });
-      }
+    it('should succeed if custom target url provided without API key or project id', function() {
+      expect(function() {
+        errorHandler.start({targetUrl: 'custom-url'});
+      }).to.not.throw();
     });
 
-    it('should set in stack traces when frame is anonymous', function() {
-      var message = 'custom message';
-      // Throw and catch error to attach a stacktrace
-      try {
-        (function() {
-          throw new TypeError(message);
-        })();
-      } catch (e) {
-        return errorHandler.report(e).then(function() {
-          expectRequestWithMessage('<anonymous>');
-        });
-      }
+    it('should succeed if custom function provided without API key or project id', function() {
+      expect(function() {
+        function f() {
+
+
+        }
+        errorHandler.start({customReportingFunction: f});
+      }).to.not.throw();
     });
 
-    it('should resolve with stacktrace in message', function() {
-      try {
-        throwError('mystery problem');
-      } catch (e) {
-        return errorHandler.report(e).then(function(details) {
-          var expected = ': mystery problem\n    at throwError (';
-          expectRequestWithMessage(expected);
-          expect(details.message).to.contain(expected);
-        });
-      }
+
+    it('should have default context', function() {
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+      expect(errorHandler.context).to.eql({});
     });
 
-    describe('XHR error handling', function() {
-      it('should handle network error', function() {
-        requestHandler = function(req) {
-          req.error();
-        };
-        var message = 'News that will fail to send';
-        return errorHandler.report(message).then(function() {
-          throw new Error('unexpected fulfilled report');
-        }, function(err) {
-          expectRequestWithMessage(message);
-          expect(err.message).to.equal('network error on stackdriver report');
-        });
-      });
-
-      it('should handle http error', function() {
-        requestHandler = function(req) {
-          req.respond(503, {'Content-Type': 'text/plain'}, '');
-        };
-        errorHandler.start({key: 'key', projectId: 'projectId'});
-        var message = 'News that was rejected on send';
-        return errorHandler.report(message).then(function() {
-          throw new Error('unexpected fulfilled report');
-        }, function(err) {
-          expectRequestWithMessage(message);
-          expect(err.message).to.equal('503 http response on stackdriver report');
-        });
-      });
-
-      it('should not handle quota exceeded error responses', function() {
-        requestHandler = function(req) {
-          // HTTP 429 returned from Stackdriver after reaching reporting quota.
-          req.respond(429, {'Content-Type': 'text/plain'}, '');
-        };
-        errorHandler.start({key: 'key', projectId: 'projectId'});
-        var message = 'News that will be rejected on send';
-        return errorHandler.report(message).then(function() {
-          throw new Error('unexpected fulfilled report');
-        }, function(fakeErr) {
-          expectRequestWithMessage(message);
-          // We don't expect an Error to be returned in this case.
-          expect(fakeErr.name).to.equal('Http429FakeError');
-          expect(fakeErr.message).to.equal(
-            'quota or rate limiting error on stackdriver report');
-        });
-      });
+    it('should allow to specify a default context', function() {
+      errorHandler.start({context: {user: '1234567890'}, key: 'key', projectId: 'projectId'});
+      expect(errorHandler.context).to.eql({user: '1234567890'});
     });
-  });
+  };
+}
 
-  describe('Custom target url configuration', function() {
-    it('should report error messages with custom url config', function() {
-      var targetUrl = 'config-uri-clouderrorreporting';
-      errorHandler.start({targetUrl: targetUrl});
-
-      var message = 'Something broke!';
-      return errorHandler.report(message).then(function() {
-        expectRequestWithMessage(message);
-        expect(requests[0].url).to.equal(targetUrl);
-      });
-    });
-  });
-
-  describe('Custom reporting function', function() {
-    it('should report error messages only to custom function', function() {
-      var funcResult = null;
-      function customFunc(payload) {
-        funcResult = payload;
-        return Promise.resolve();
-      }
-      errorHandler.start({customReportingFunction: customFunc});
-
-      var message = 'Something broke!';
-      return errorHandler.report(message).then(function() {
-        expectPayloadWithMessage(funcResult, message);
+function disabling() {
+  return function() {
+    it('should not report errors if disabled', function() {
+      errorHandler.start({key: 'key', projectId: 'projectId', disabled: true});
+      return errorHandler.report('do not report').then(function() {
         expect(requests.length).to.equal(0);
       });
     });
-  });
-});
+  };
+}
 
-describe('Unhandled exceptions', function() {
-  it('should be reported by default', function(done) {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
 
-    var message = 'custom message';
-    try {
-      throw new TypeError(message);
-    } catch (e) {
-      window.onerror(message, 'test.js', 42, 42, e);
+function reportingErrors() {
+  return function() {
+    describe('Default configuration', function() {
+      beforeEach(function() {
+        errorHandler.start({key: 'key', projectId: 'projectId'});
+      });
+
+
+      it('should report error messages with location', function() {
+        var message = 'Something broke!';
+        return errorHandler.report(message).then(function() {
+          expectRequestWithMessage(message);
+        });
+      });
+
+
+      it('should include report origin by default', function() {
+        var helper = function helperFn(handler) {
+          return handler.report('common message');
+        };
+        return helper(errorHandler).then(function() {
+          expectRequestWithMessage(': common message\n    at helperFn (');
+        });
+      });
+
+
+      it('should skip number of frames if option is given', function() {
+        var helper = function outerFn(handler) {
+          return (function innerFn() {
+            return handler.report('common message', {skipLocalFrames: 2});
+          })();
+        };
+        return helper(errorHandler).then(function() {
+          expectRequestWithMessage(': common message\n    at outerFn (');
+        });
+      });
+
+      it('should extract and send stack traces from Errors', function() {
+        var message = 'custom message';
+        // Throw and catch error to attach a stacktrace
+        try {
+          throw new TypeError(message);
+        } catch (e) {
+          return errorHandler.report(e).then(function() {
+            expectRequestWithMessage(message);
+          });
+        }
+      });
+
+      it('should extract and send functionName in stack traces', function() {
+        var message = 'custom message';
+        // Throw and catch error to attach a stacktrace
+        try {
+          throwError(message);
+        } catch (e) {
+          return errorHandler.report(e).then(function() {
+            expectRequestWithMessage('throwError');
+          });
+        }
+      });
+
+      it('should set in stack traces when frame is anonymous', function() {
+        var message = 'custom message';
+        // Throw and catch error to attach a stacktrace
+        try {
+          (function() {
+            throw new TypeError(message);
+          })();
+        } catch (e) {
+          return errorHandler.report(e).then(function() {
+            expectRequestWithMessage('<anonymous>');
+          });
+        }
+      });
+
+      it('should resolve with stacktrace in message', function() {
+        try {
+          throwError('mystery problem');
+        } catch (e) {
+          return errorHandler.report(e).then(function(details) {
+            var expected = ': mystery problem\n    at throwError (';
+            expectRequestWithMessage(expected);
+            expect(details.message).to.contain(expected);
+          });
+        }
+      });
+
+      describe('XHR error handling', function() {
+        it('should handle network error', function() {
+          requestHandler = function(req) {
+            req.error();
+          };
+          var message = 'News that will fail to send';
+          return errorHandler.report(message).then(function() {
+            throw new Error('unexpected fulfilled report');
+          }, function(err) {
+            expectRequestWithMessage(message);
+            expect(err.message).to.equal('network error on stackdriver report');
+          });
+        });
+
+
+        it('should handle http error', function() {
+          requestHandler = function(req) {
+            req.respond(503, {'Content-Type': 'text/plain'}, '');
+          };
+          errorHandler.start({key: 'key', projectId: 'projectId'});
+          var message = 'News that was rejected on send';
+          return errorHandler.report(message).then(function() {
+            throw new Error('unexpected fulfilled report');
+          }, function(err) {
+            expectRequestWithMessage(message);
+            expect(err.message).to.equal('503 http response on stackdriver report');
+          });
+        });
+
+
+        it('should not handle quota exceeded error responses', function() {
+          requestHandler = function(req) {
+            // HTTP 429 returned from Stackdriver after reaching reporting quota.
+            req.respond(429, {'Content-Type': 'text/plain'}, '');
+          };
+          errorHandler.start({key: 'key', projectId: 'projectId'});
+          var message = 'News that will be rejected on send';
+          return errorHandler.report(message).then(function() {
+            throw new Error('unexpected fulfilled report');
+          }, function(fakeErr) {
+            expectRequestWithMessage(message);
+            // We don't expect an Error to be returned in this case.
+            expect(fakeErr.name).to.equal('Http429FakeError');
+            expect(fakeErr.message).to.equal(
+              'quota or rate limiting error on stackdriver report');
+          });
+        });
+      });
+    });
+
+    describe('Custom target url configuration', function() {
+      it('should report error messages with custom url config', function() {
+        var targetUrl = 'config-uri-clouderrorreporting';
+        errorHandler.start({targetUrl: targetUrl});
+
+        var message = 'Something broke!';
+        return errorHandler.report(message).then(function() {
+          expectRequestWithMessage(message);
+          expect(requests[0].url).to.equal(targetUrl);
+        });
+      });
+    });
+
+    describe('Custom reporting function', function() {
+      it('should report error messages only to custom function', function() {
+        var funcResult = null;
+        function customFunc(payload) {
+          funcResult = payload;
+          return Promise.resolve();
+        }
+        errorHandler.start({customReportingFunction: customFunc});
+
+        var message = 'Something broke!';
+        return errorHandler.report(message).then(function() {
+          expectPayloadWithMessage(funcResult, message);
+          expect(requests.length).to.equal(0);
+        });
+      });
+    });
+  };
+}
+
+function unhandledExceptions(wnd) {
+  return function() {
+    it('should be reported by default', function(done) {
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+
+      var message = 'custom message';
+      try {
+        throw new TypeError(message);
+      } catch (e) {
+        wnd.onerror(message, 'test.js', 42, 42, e);
+
+
+        setTimeout(function() {
+          expectRequestWithMessage(message);
+          done();
+        }, WAIT_FOR_STACKTRACE_FROMERROR);
+      }
+    });
+
+
+    it('should keep calling previous error handler if already present', function(done) {
+      var originalOnErrorCalled = false;
+      wnd.onerror = function() {
+        originalOnErrorCalled = true;
+      };
+
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+
+
+      var message = 'custom message';
+      try {
+        throw new TypeError(message);
+      } catch (e) {
+        wnd.onerror(message, 'test.js', 42, 42, e);
+
+
+        setTimeout(function() {
+          expect(originalOnErrorCalled).to.be.true;
+          done();
+        }, WAIT_FOR_STACKTRACE_FROMERROR);
+      }
+    });
+  };
+}
+
+function unhandledPromiseRejections(wnd) {
+  return function() {
+    it('should be reported by default', function(done) {
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+
+      var message = 'custom promise rejection message';
+      try {
+        throwError(message);
+      } catch (e) {
+        var promiseRejectionEvent = {reason: e};
+
+        wnd.onunhandledrejection(promiseRejectionEvent);
+
+
+        setTimeout(function() {
+          expectRequestWithMessage(message);
+          done();
+        }, WAIT_FOR_STACKTRACE_FROMERROR);
+      }
+    });
+
+    it('should keep calling previous promise rejection handler if already present', function(done) {
+      var originalOnUnhandledRejectionCalled = false;
+      wnd.onunhandledrejection = function() {
+        originalOnUnhandledRejectionCalled = true;
+      };
+
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+
+
+      var message = 'custom promise rejection message';
+      var promiseRejectionEvent = {reason: new TypeError(message)};
+
+      wnd.onunhandledrejection(promiseRejectionEvent);
 
       setTimeout(function() {
-        expectRequestWithMessage(message);
+        expect(originalOnUnhandledRejectionCalled).to.be.true;
         done();
       }, WAIT_FOR_STACKTRACE_FROMERROR);
-    }
+    });
+  };
+}
+
+function settingUser() {
+  return function() {
+    it('should set the user in the context', function() {
+      errorHandler.start({key: 'key', projectId: 'projectId'});
+      errorHandler.setUser('1234567890');
+      expect(errorHandler.context.user).to.equal('1234567890');
+      errorHandler.setUser();
+      expect(errorHandler.context.user).to.equal(undefined);
+    });
+  };
+}
+describe('Regular (empty) constructor - default window object', function() {
+  beforeEach(function() {
+    window.onerror = function() { };
+    window.onunhandledrejection = function() { };
+    errorHandler = new StackdriverErrorReporter();
   });
 
-  it('should keep calling previous error handler if already present', function(done) {
-    var originalOnErrorCalled = false;
-    window.onerror = function() {
-      originalOnErrorCalled = true;
-    };
+  describe('Initialization', initialization());
 
-    errorHandler.start({key: 'key', projectId: 'projectId'});
 
-    var message = 'custom message';
-    try {
-      throw new TypeError(message);
-    } catch (e) {
-      window.onerror(message, 'test.js', 42, 42, e);
+  describe('Disabling', disabling());
 
-      setTimeout(function() {
-        expect(originalOnErrorCalled).to.be.true;
-        done();
-      }, WAIT_FOR_STACKTRACE_FROMERROR);
-    }
-  });
+  describe('Reporting errors', reportingErrors());
+
+
+  describe('Unhandled exceptions', unhandledExceptions(window));
+
+  describe('Unhandled promise rejections', unhandledPromiseRejections(window));
+
+  describe('Setting user', settingUser());
 });
 
-describe('Unhandled promise rejections', function() {
-  it('should be reported by default', function(done) {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
-
-    var message = 'custom promise rejection message';
-    try {
-      throwError(message);
-    } catch (e) {
-      var promiseRejectionEvent = {reason: e};
-
-      window.onunhandledrejection(promiseRejectionEvent);
-
-      setTimeout(function() {
-        expectRequestWithMessage(message);
-        done();
-      }, WAIT_FOR_STACKTRACE_FROMERROR);
-    }
+var customWindow = {
+  location: {href: 'http://other-stackdriver-errors.test/'},
+  navigator: {userAgent: 'FakeAgent2'},
+};
+describe('Pass custom window object to constructor ', function() {
+  beforeEach(function() {
+    customWindow.onerror = function() { };
+    customWindow.onunhandledrejection = function() { };
+    errorHandler = new StackdriverErrorReporter(customWindow);
   });
 
-  it('should keep calling previous promise rejection handler if already present', function(done) {
-    var originalOnUnhandledRejectionCalled = false;
-    window.onunhandledrejection = function() {
-      originalOnUnhandledRejectionCalled = true;
-    };
+  describe('Initialization', initialization());
 
-    errorHandler.start({key: 'key', projectId: 'projectId'});
+  describe('Disabling', disabling());
 
-    var message = 'custom promise rejection message';
-    var promiseRejectionEvent = {reason: new TypeError(message)};
+  describe('Reporting errors', reportingErrors());
 
-    window.onunhandledrejection(promiseRejectionEvent);
+  describe('Unhandled exceptions', unhandledExceptions(customWindow));
 
-    setTimeout(function() {
-      expect(originalOnUnhandledRejectionCalled).to.be.true;
-      done();
-    }, WAIT_FOR_STACKTRACE_FROMERROR);
-  });
-});
+  describe('Unhandled promise rejections', unhandledPromiseRejections(customWindow));
 
-describe('Setting user', function() {
-  it('should set the user in the context', function() {
-    errorHandler.start({key: 'key', projectId: 'projectId'});
-    errorHandler.setUser('1234567890');
-    expect(errorHandler.context.user).to.equal('1234567890');
-    errorHandler.setUser();
-    expect(errorHandler.context.user).to.equal(undefined);
-  });
+  describe('Setting user', settingUser());
 });
 
 afterEach(function() {
   xhr.restore();
+  errorHandler = null;
+  requestHandler = null;
 });
