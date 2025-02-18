@@ -43,7 +43,7 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify": "^3.0.2",
     "http-server": "^0.12.3",
-    "mocha": "^9.0.2",
+    "mocha": "^11.1.0",
     "nise": "^1.5.3",
     "rimraf": "^2.7.1",
     "vinyl-buffer": "^1.0.1",
